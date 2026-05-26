@@ -1,0 +1,184 @@
+<!-- DETALLE DE USUARIO (ADMIN) -->
+<div class="row justify-content-center">
+  <div class="col-12 col-xl-10">
+
+    <!-- Cabecera -->
+    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+      <div class="flex-grow-1">
+        <h1 class="mb-0 icon-text">
+          <i class="bi bi-person-lines-fill" aria-hidden="true"></i>
+          {{usuario.nombre}}
+        </h1>
+        <p class="text-muted mb-0">{{usuario.email}}</p>
+      </div>
+      <a href="/admin" class="btn btn-outline-secondary icon-text">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        Volver al panel
+      </a>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- ── Información del usuario ────────────────────────────────────────── -->
+      <div class="col-12 col-md-5">
+        <div class="card shadow-sm h-100">
+          <div class="card-header">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-person-circle" aria-hidden="true"></i>
+              Datos de cuenta
+            </h2>
+          </div>
+          <div class="card-body">
+            <dl class="row mb-4">
+              <dt class="col-5 text-muted fw-normal">ID</dt>
+              <dd class="col-7">{{usuario.id}}</dd>
+
+              <dt class="col-5 text-muted fw-normal">Nombre</dt>
+              <dd class="col-7">{{usuario.nombre}}</dd>
+
+              <dt class="col-5 text-muted fw-normal">Email</dt>
+              <dd class="col-7">{{usuario.email}}</dd>
+
+              <dt class="col-5 text-muted fw-normal">Rol</dt>
+              <dd class="col-7">
+                {{#if (eq usuario.rol 'admin')}}
+                <span class="badge bg-danger icon-text">
+                  <i class="bi bi-shield-check" aria-hidden="true"></i>
+                  Administrador
+                </span>
+                {{else}}
+                <span class="badge bg-secondary">Usuario</span>
+                {{/if}}
+              </dd>
+
+              <dt class="col-5 text-muted fw-normal">Estado</dt>
+              <dd class="col-7">
+                {{#if usuario.activo}}
+                <span class="badge bg-success">Activo</span>
+                {{else}}
+                <span class="badge bg-warning text-dark">Inactivo</span>
+                {{/if}}
+              </dd>
+
+              <dt class="col-5 text-muted fw-normal">Miembro desde</dt>
+              <dd class="col-7 mb-0">{{usuario.creado_en}}</dd>
+            </dl>
+
+            <!-- Acciones -->
+            {{#unless (eq usuario.rol 'admin')}}
+            <div class="d-flex flex-column gap-2">
+              <form action="/admin/usuarios/{{usuario.id}}/toggle-activo" method="POST">
+                <button type="submit"
+                        class="btn btn-sm w-100 icon-text {{#if usuario.activo}}btn-outline-warning{{else}}btn-outline-success{{/if}}">
+                  <i class="bi {{#if usuario.activo}}bi-pause-circle{{else}}bi-play-circle{{/if}}" aria-hidden="true"></i>
+                  {{#if usuario.activo}}Desactivar usuario{{else}}Activar usuario{{/if}}
+                </button>
+              </form>
+
+              <form action="/admin/usuarios/{{usuario.id}}/cambiar-rol" method="POST" class="d-flex gap-2">
+                <select name="rol" class="form-select form-select-sm" aria-label="Cambiar rol">
+                  <option value="user" {{#unless (eq usuario.rol 'admin')}}selected{{/unless}}>Usuario</option>
+                  <option value="admin" {{#if (eq usuario.rol 'admin')}}selected{{/if}}>Administrador</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-outline-primary text-nowrap">Cambiar rol</button>
+              </form>
+
+              <form action="/admin/usuarios/{{usuario.id}}/eliminar" method="POST"
+                    onsubmit="return confirm('¿Eliminar al usuario {{usuario.nombre}}? Esta acción no se puede deshacer.')">
+                <button type="submit" class="btn btn-sm btn-outline-danger w-100 icon-text">
+                  <i class="bi bi-trash" aria-hidden="true"></i>
+                  Eliminar usuario
+                </button>
+              </form>
+            </div>
+            {{else}}
+            <div class="alert alert-info mb-0 small">
+              <i class="bi bi-info-circle" aria-hidden="true"></i>
+              No se pueden modificar cuentas de administrador.
+            </div>
+            {{/unless}}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Planes del usuario ─────────────────────────────────────────────── -->
+      <div class="col-12 col-md-7">
+        <div class="card shadow-sm h-100">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-journal-text" aria-hidden="true"></i>
+              Planes de entrenamiento
+            </h2>
+            <span class="badge bg-primary">{{planes.length}}</span>
+          </div>
+          {{#if planes.length}}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle" aria-label="Planes del usuario">
+              <thead class="table-light">
+                <tr>
+                  <th>Plan</th>
+                  <th class="text-center">Días</th>
+                  <th class="text-center">Sesiones</th>
+                  <th>Última sesión</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each planes}}
+                <tr>
+                  <td class="fw-semibold">{{nombre}}</td>
+                  <td class="text-center">{{num_dias}}</td>
+                  <td class="text-center">{{num_sesiones}}</td>
+                  <td class="text-muted small">{{#if ultima_sesion}}{{ultima_sesion}}{{else}}—{{/if}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          {{else}}
+          <div class="card-body text-muted text-center py-4">
+            <i class="bi bi-journal-x fs-2 d-block mb-2" aria-hidden="true"></i>
+            Este usuario no tiene planes aún.
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- ── Últimas sesiones ───────────────────────────────────────────────── -->
+      {{#if ultimasSesiones.length}}
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-clock-history" aria-hidden="true"></i>
+              Últimas sesiones (máx. 10)
+            </h2>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle" aria-label="Últimas sesiones">
+              <thead class="table-light">
+                <tr>
+                  <th>Fecha</th>
+                  <th>Plan</th>
+                  <th>Día</th>
+                  <th class="text-end">Duración</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each ultimasSesiones}}
+                <tr>
+                  <td>{{fecha}}</td>
+                  <td><span class="badge bg-primary-subtle text-primary border">{{plan_nombre}}</span></td>
+                  <td>{{dia_nombre}}</td>
+                  <td class="text-end text-muted small">{{duracion_fmt}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+
+    </div>
+  </div>
+</div>

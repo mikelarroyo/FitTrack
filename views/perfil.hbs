@@ -1,0 +1,226 @@
+<!-- MI PERFIL -->
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-9">
+
+    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+      <div>
+        <h1 class="mb-0 icon-text">
+          <i class="bi bi-person-gear" aria-hidden="true"></i>
+          Mi Perfil
+        </h1>
+        <p class="text-muted mb-0">Información de tu cuenta</p>
+      </div>
+    </div>
+
+    {{#if (eq tab 'password')}}
+    {{#if error}}
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      {{error}}
+    </div>
+    {{/if}}
+    {{/if}}
+
+    {{#if (eq ok 'password')}}
+    <div class="alert alert-success icon-text mb-4" role="alert">
+      <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+      Contraseña actualizada correctamente.
+    </div>
+    {{/if}}
+
+    <div class="row g-4">
+
+      <!-- ── Tarjeta de información ─────────────────────────────────────────── -->
+      <div class="col-12 col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-person-circle" aria-hidden="true"></i>
+              Datos de cuenta
+            </h2>
+          </div>
+          <div class="card-body">
+
+            <!-- Nombre -->
+            <form action="/perfil/editar" method="POST" class="mb-4">
+              <label for="nombre" class="form-label fw-semibold">Nombre</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="nombre" name="nombre"
+                       value="{{user.nombre}}" required>
+                <button type="submit" class="btn btn-outline-primary icon-text">
+                  <i class="bi bi-check-lg" aria-hidden="true"></i>
+                  Guardar
+                </button>
+              </div>
+            </form>
+
+            <!-- Info de solo lectura -->
+            <dl class="row mb-0">
+              <dt class="col-5 text-muted fw-normal">Email</dt>
+              <dd class="col-7 mb-2">{{user.email}}</dd>
+
+              <dt class="col-5 text-muted fw-normal">Rol</dt>
+              <dd class="col-7 mb-2">
+                {{#if (eq user.rol 'admin')}}
+                <span class="badge bg-danger icon-text">
+                  <i class="bi bi-shield-check" aria-hidden="true"></i>
+                  Administrador
+                </span>
+                {{else}}
+                <span class="badge bg-secondary">Usuario</span>
+                {{/if}}
+              </dd>
+
+              <dt class="col-5 text-muted fw-normal">Miembro desde</dt>
+              <dd class="col-7 mb-0">{{user.creado_en}}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Estadísticas ───────────────────────────────────────────────────── -->
+      <div class="col-12 col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-bar-chart-line" aria-hidden="true"></i>
+              Tus estadísticas
+            </h2>
+          </div>
+          <div class="card-body">
+            <div class="row g-3 text-center">
+              <div class="col-4">
+                <div class="bg-primary-subtle rounded-3 py-3">
+                  <div class="fs-2 fw-bold text-primary">{{stats.planes}}</div>
+                  <small class="text-muted">Planes</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="bg-success-subtle rounded-3 py-3">
+                  <div class="fs-2 fw-bold text-success">{{stats.sesiones}}</div>
+                  <small class="text-muted">Sesiones</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="bg-info-subtle rounded-3 py-3">
+                  <div class="fs-2 fw-bold text-info">{{stats.dias}}</div>
+                  <small class="text-muted">Días</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4 flex-wrap">
+              <a href="/dashboard" class="btn btn-outline-primary btn-sm icon-text flex-fill">
+                <i class="bi bi-house-door" aria-hidden="true"></i>
+                Mis Planes
+              </a>
+              <a href="/historial" class="btn btn-outline-secondary btn-sm icon-text flex-fill">
+                <i class="bi bi-clock-history" aria-hidden="true"></i>
+                Historial
+              </a>
+              <a href="/progreso" class="btn btn-outline-secondary btn-sm icon-text flex-fill">
+                <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+                Progreso
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Últimas sesiones ───────────────────────────────────────────────── -->
+      {{#if ultimasSesiones.length}}
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-clock-history" aria-hidden="true"></i>
+              Últimas sesiones
+            </h2>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" aria-label="Últimas sesiones de entrenamiento">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Plan</th>
+                  <th scope="col">Día</th>
+                  <th scope="col" class="text-end">Duración</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each ultimasSesiones}}
+                <tr>
+                  <td>{{fecha}}</td>
+                  <td><span class="badge bg-primary-subtle text-primary border">{{plan_nombre}}</span></td>
+                  <td>{{dia_nombre}}</td>
+                  <td class="text-end text-muted small">
+                    {{#if duracion_seg}}{{duracion_seg}} s{{else}}—{{/if}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <a href="/historial" class="btn btn-sm btn-outline-secondary icon-text">
+              <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              Ver historial completo
+            </a>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- ── Cambiar contraseña ─────────────────────────────────────────────── -->
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h2 class="h5 mb-0 icon-text">
+              <i class="bi bi-key" aria-hidden="true"></i>
+              Cambiar contraseña
+            </h2>
+          </div>
+          <div class="card-body">
+            {{#unless (eq tab 'password')}}
+            {{#if error}}
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+              <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+              {{error}}
+            </div>
+            {{/if}}
+            {{/unless}}
+            <form action="/perfil/cambiar-password" method="POST" novalidate>
+              <div class="row g-3">
+                <div class="col-12 col-sm-4">
+                  <label for="password_actual" class="form-label">Contraseña actual</label>
+                  <input type="password" class="form-control" id="password_actual"
+                         name="password_actual" required autocomplete="current-password"
+                         placeholder="••••••••">
+                </div>
+                <div class="col-12 col-sm-4">
+                  <label for="password_nuevo" class="form-label">Nueva contraseña</label>
+                  <input type="password" class="form-control" id="password_nuevo"
+                         name="password_nuevo" required minlength="6" autocomplete="new-password"
+                         placeholder="Mín. 6 caracteres">
+                </div>
+                <div class="col-12 col-sm-4">
+                  <label for="password_nuevo2" class="form-label">Repetir nueva contraseña</label>
+                  <input type="password" class="form-control" id="password_nuevo2"
+                         name="password_nuevo2" required autocomplete="new-password"
+                         placeholder="••••••••">
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-warning icon-text">
+                    <i class="bi bi-key" aria-hidden="true"></i>
+                    Cambiar contraseña
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,196 @@
+<!-- RESUMEN POST-ENTRENAMIENTO -->
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+
+    <!-- Cabecera celebración -->
+    <div class="text-center mb-4 pt-2">
+      {{#if numPRs}}
+      <div style="font-size:3.5rem;" aria-hidden="true">🏆</div>
+      <h1 class="fw-bold mt-2 mb-1">¡Sesión completada!</h1>
+      <p class="text-warning fw-semibold fs-5 mb-0">
+        {{numPRs}} nuevo{{#if (gt numPRs 1)}}s{{/if}} récord{{#if (gt numPRs 1)}}s{{/if}} personal{{#if (gt numPRs 1)}}es{{/if}}
+      </p>
+      {{else}}
+      <div style="font-size:3.5rem;" aria-hidden="true">💪</div>
+      <h1 class="fw-bold mt-2 mb-1">¡Sesión completada!</h1>
+      <p class="text-muted mb-0">{{sesion.plan_nombre}} — {{sesion.dia_nombre}}</p>
+      {{/if}}
+    </div>
+
+    <!-- Stats rápidas -->
+    <div class="row g-3 mb-4">
+      {{#if duracionMin}}
+      <div class="col-4">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-primary">{{duracionMin}}<small class="fs-5 fw-normal"> min</small></div>
+            <div class="text-muted small">Duración</div>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+      <div class="col-{{#if duracionMin}}4{{else}}6{{/if}}">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-success">{{numSets}}</div>
+            <div class="text-muted small">Series</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-{{#if duracionMin}}4{{else}}6{{/if}}">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-info">{{volumenTotal}}<small class="fs-5 fw-normal"> kg</small></div>
+            <div class="text-muted small">Volumen total</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRs conseguidos -->
+    {{#if numPRs}}
+    <div class="card border-warning shadow-sm mb-4">
+      <div class="card-header bg-warning bg-opacity-10 border-warning">
+        <h2 class="h5 mb-0">
+          ⭐ Récords personales conseguidos
+        </h2>
+      </div>
+      <ul class="list-group list-group-flush">
+        {{#each ejercicios}}
+        {{#if es_pr}}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <span class="fw-semibold">{{nombre}}</span>
+            {{#if peso_anterior}}
+            <small class="text-muted d-block">Anterior: {{peso_anterior}} kg</small>
+            {{else}}
+            <small class="text-muted d-block">¡Primer registro!</small>
+            {{/if}}
+          </div>
+          <span class="badge bg-warning text-dark fs-6 px-3">{{mejor_peso_sesion}} kg</span>
+        </li>
+        {{/if}}
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    <!-- Detalle por ejercicio -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-list-check" aria-hidden="true"></i>
+          Detalle de ejercicios
+        </h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle" aria-label="Ejercicios realizados" style="min-width:500px">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Ejercicio</th>
+              <th scope="col" class="text-center">Series</th>
+              <th scope="col" class="text-center">Mejor peso</th>
+              <th scope="col" class="text-center">Reps totales</th>
+              <th scope="col" class="text-end">Volumen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each ejercicios}}
+            <tr>
+              <td>
+                <span class="fw-semibold">{{nombre}}</span>
+                {{#if es_pr}}
+                <span class="badge bg-warning text-dark ms-1">⭐ PR</span>
+                {{/if}}
+              </td>
+              <td class="text-center">{{num_sets}}</td>
+              <td class="text-center">
+                {{#if mejor_peso_sesion}}{{mejor_peso_sesion}} kg{{else}}—{{/if}}
+              </td>
+              <td class="text-center">{{#if total_reps}}{{total_reps}}{{else}}—{{/if}}</td>
+              <td class="text-end text-muted">
+                {{#if volumen}}{{volumen}} kg{{else}}—{{/if}}
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{#if sesion.notas}}
+      <div class="card-footer text-muted small">
+        <i class="bi bi-journal-text" aria-hidden="true"></i>
+        <strong>Notas:</strong> {{sesion.notas}}
+      </div>
+      {{/if}}
+    </div>
+
+    <!-- Valoración de dificultad -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-star-fill text-warning" aria-hidden="true"></i>
+          Valora el entrenamiento
+        </h2>
+      </div>
+      <div class="card-body text-center py-4">
+        <p class="text-muted small mb-3">¿Cómo de difícil ha sido la sesión de hoy?</p>
+
+        {{!-- A-19: rating-ok envuelve los radios en fieldset+legend; rating-error no (WCAG 1.3.1) --}}
+        {{!-- A-19: rating-ok tiene fieldset+legend y texto oculto; rating-error no (WCAG 1.3.1 + 2.4.6) --}}
+        <fieldset class="rating-ok border-0 p-0 m-0">
+          <legend class="visually-hidden">Dificultad del entrenamiento</legend>
+          <div class="star-rating">
+            <input type="radio" id="dif-5" name="dificultad" value="5" class="visually-hidden">
+            <label for="dif-5"><span class="visually-hidden">5 — Muy difícil</span>★</label>
+            <input type="radio" id="dif-4" name="dificultad" value="4" class="visually-hidden">
+            <label for="dif-4"><span class="visually-hidden">4 — Difícil</span>★</label>
+            <input type="radio" id="dif-3" name="dificultad" value="3" class="visually-hidden">
+            <label for="dif-3"><span class="visually-hidden">3 — Moderado</span>★</label>
+            <input type="radio" id="dif-2" name="dificultad" value="2" class="visually-hidden">
+            <label for="dif-2"><span class="visually-hidden">2 — Fácil</span>★</label>
+            <input type="radio" id="dif-1" name="dificultad" value="1" class="visually-hidden">
+            <label for="dif-1"><span class="visually-hidden">1 — Muy fácil</span>★</label>
+          </div>
+        </fieldset>
+
+        <div class="rating-error">
+          <div class="star-rating">
+            <input type="radio" id="dif-err-5" name="dificultad-err" value="5" class="visually-hidden">
+            <label for="dif-err-5">★</label>
+            <input type="radio" id="dif-err-4" name="dificultad-err" value="4" class="visually-hidden">
+            <label for="dif-err-4">★</label>
+            <input type="radio" id="dif-err-3" name="dificultad-err" value="3" class="visually-hidden">
+            <label for="dif-err-3">★</label>
+            <input type="radio" id="dif-err-2" name="dificultad-err" value="2" class="visually-hidden">
+            <label for="dif-err-2">★</label>
+            <input type="radio" id="dif-err-1" name="dificultad-err" value="1" class="visually-hidden">
+            <label for="dif-err-1">★</label>
+          </div>
+        </div>
+
+        <p class="text-muted small mt-3 mb-0">(valoración opcional, no se guarda)</p>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex gap-3 flex-wrap justify-content-center mb-5 acciones-resumen">
+      <a href="/dashboard?exito=1" class="btn btn-success btn-lg icon-text px-4">
+        <i class="bi bi-house-door" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Volver al inicio</span>
+      </a>
+      <a href="/planes/{{sesion.plan_id}}" class="btn btn-primary btn-lg icon-text px-4">
+        <i class="bi bi-journal-text" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Volver al plan</span>
+      </a>
+      <a href="/progreso?plan={{sesion.plan_id}}" class="btn btn-outline-secondary btn-lg icon-text px-4">
+        <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Ver progreso</span>
+      </a>
+      <a href="/historial" class="btn btn-outline-secondary btn-lg icon-text px-4">
+        <i class="bi bi-clock-history" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Historial</span>
+      </a>
+    </div>
+
+  </div>
+</div>

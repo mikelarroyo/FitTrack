@@ -1,0 +1,10 @@
+node_modules/
+.claude/
+.git/
+*.log
+server-err.txt
+server-out.txt
+repo1/
+repo2/
+repo3/
+guiones-*.md

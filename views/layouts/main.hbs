@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FitTrack — Seguimiento de planes y progreso de entrenamiento">
+  <title>{{title}} | FitTrack</title>
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body class="{{currentTheme}}" id="app-body">
+
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm" aria-label="Navegación principal">
+    <div class="container-fluid">
+
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/dashboard">
+        <i class="bi bi-activity" aria-hidden="true"></i>
+        FitTrack
+      </a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navbarMain"
+              aria-controls="navbarMain" aria-expanded="false"
+              aria-label="Abrir navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="list">
+
+          <li class="nav-item">
+            <a class="nav-link {{navActive currentPath '/dashboard'}}" href="/dashboard"
+               {{#if (eq currentPath '/dashboard')}}aria-current="page"{{/if}}>
+              <i class="bi bi-house-door" aria-hidden="true"></i>
+              <span>Mis Planes</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{navActive currentPath '/planes/nuevo'}}" href="/planes/nuevo"
+               {{#if (eq currentPath '/planes/nuevo')}}aria-current="page"{{/if}}>
+              <i class="bi bi-plus-circle" aria-hidden="true"></i>
+              <span>Nuevo Plan</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{navActive currentPath '/historial'}}" href="/historial"
+               {{#if (eq currentPath '/historial')}}aria-current="page"{{/if}}>
+              <i class="bi bi-clock-history" aria-hidden="true"></i>
+              <span>Historial</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{navActive currentPath '/progreso'}}" href="/progreso"
+               {{#if (eq currentPath '/progreso')}}aria-current="page"{{/if}}>
+              <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+              <span>Progreso</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{navActive currentPath '/analisis'}}" href="/analisis"
+               {{#if (eq currentPath '/analisis')}}aria-current="page"{{/if}}>
+              <i class="bi bi-camera-video" aria-hidden="true"></i>
+              <span>Análisis</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle {{navDropActive currentPath '/mapa-web' '/sobre-nosotros'}}"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    aria-haspopup="true">
+              <i class="bi bi-three-dots" aria-hidden="true"></i>
+              <span>Más</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item {{navActive currentPath '/mapa-web'}}" href="/mapa-web"
+                   {{#if (eq currentPath '/mapa-web')}}aria-current="page"{{/if}}>
+                  <i class="bi bi-map" aria-hidden="true"></i>
+                  Mapa Web
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {{navActive currentPath '/sobre-nosotros'}}" href="/sobre-nosotros"
+                   {{#if (eq currentPath '/sobre-nosotros')}}aria-current="page"{{/if}}>
+                  <i class="bi bi-person-badge" aria-hidden="true"></i>
+                  Sobre Nosotros
+                </a>
+              </li>
+            </ul>
+          </li>
+
+        </ul>
+
+        <!-- Selector de Tema -->
+        <div class="d-flex align-items-center gap-2 skin-selector-wrapper"
+             role="group" aria-label="Selector de tema pedagógico">
+          <label for="skin-select" class="text-white mb-0 fw-semibold text-nowrap">
+            <i class="bi bi-palette" aria-hidden="true"></i>
+            <span class="ms-1 d-none d-sm-inline">Tema:</span>
+          </label>
+          <select id="skin-select" class="form-select form-select-sm skin-select"
+                  autocomplete="off" aria-describedby="skin-help">
+            <option value="theme-base">Base</option>
+            <option value="theme-usability">No usable</option>
+            <option value="theme-accessibility">No accesible</option>
+          </select>
+          <span id="skin-help" class="visually-hidden">
+            Cambia entre el tema base correcto y los temas con errores pedagógicos de UI
+          </span>
+        </div>
+
+        <!-- Menú de usuario -->
+        {{#if currentUser}}
+        <div class="dropdown ms-2">
+          <button class="btn btn-outline-light btn-sm dropdown-toggle icon-text"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="Menú de usuario">
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            <span class="d-none d-md-inline">{{currentUser.nombre}}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                {{currentUser.email}}
+              </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item icon-text {{navActive currentPath '/perfil'}}" href="/perfil">
+                <i class="bi bi-person-gear" aria-hidden="true"></i>
+                Mi Perfil
+              </a>
+            </li>
+            {{#if isAdmin}}
+            <li>
+              <a class="dropdown-item icon-text {{navActive currentPath '/admin'}}" href="/admin">
+                <i class="bi bi-shield-check" aria-hidden="true"></i>
+                Panel Admin
+              </a>
+            </li>
+            {{/if}}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="/logout" method="POST" class="px-3 py-1">
+                <button type="submit" class="btn btn-outline-danger btn-sm w-100 icon-text">
+                  <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                  Cerrar sesión
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+        {{/if}}
+
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" class="container py-4" tabindex="-1">
+
+    {{#if breadcrumbs}}
+    <nav aria-label="Ruta de navegación" class="breadcrumb-nav mb-3">
+      <ol class="breadcrumb">
+        {{#each breadcrumbs}}
+        <li class="breadcrumb-item {{#if active}}active{{/if}}"
+            {{#if active}}aria-current="page"{{/if}}>
+          {{#unless active}}<a href="{{url}}">{{label}}</a>{{else}}{{label}}{{/unless}}
+        </li>
+        {{/each}}
+      </ol>
+    </nav>
+    {{/if}}
+
+    {{{body}}}
+
+  </main>
+
+  <footer class="footer mt-auto py-3 bg-light border-top">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <p class="mb-0 text-muted small">
+        &copy; 2026 FitTrack &mdash; Práctica Diseño de Interfaces, 2º DAW
+      </p>
+      <nav aria-label="Pie de página">
+        <ul class="nav small">
+          <li class="nav-item"><a class="nav-link text-muted px-2" href="/mapa-web">Mapa Web</a></li>
+          <li class="nav-item"><a class="nav-link text-muted px-2" href="/sobre-nosotros">Sobre Nosotros</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+  <script src="/js/skin.js"></script>
+
+</body>
+</html>

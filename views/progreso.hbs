@@ -1,0 +1,299 @@
+<!-- PROGRESO POR PLAN Y EJERCICIO -->
+<span class="js-page-progreso d-none" aria-hidden="true"></span>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="mb-0 icon-text">
+    <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+    Mi Progreso
+  </h1>
+  <a href="/historial" class="btn btn-outline-secondary btn-sm icon-text">
+    <i class="bi bi-clock-history" aria-hidden="true"></i>
+    Historial
+  </a>
+</div>
+
+<!-- Filtros: plan + ejercicio -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <form method="GET" action="/progreso" class="row g-3 align-items-end">
+      <div class="col-12 col-sm-5">
+        <label for="plan-select" class="form-label fw-semibold">
+          <i class="bi bi-journal-bookmark" aria-hidden="true"></i>
+          Plan
+        </label>
+        <select name="plan" id="plan-select" class="form-select"
+                onchange="this.form.submit()">
+          {{#each planes}}
+          <option value="{{id}}" {{#if sel}}selected{{/if}}>{{nombre}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="col-12 col-sm-5">
+        <label for="ej-select" class="form-label fw-semibold">
+          <i class="bi bi-dumbbell" aria-hidden="true"></i>
+          Ejercicio
+        </label>
+        <select name="ej" id="ej-select" class="form-select">
+          {{#each dias}}
+          <optgroup label="{{dia_nombre}}">
+            {{#each ejercicios}}
+            <option value="{{id}}" {{#if sel}}selected{{/if}}>{{nombre}}</option>
+            {{/each}}
+          </optgroup>
+          {{/each}}
+        </select>
+      </div>
+      <div class="col-12 col-sm-2">
+        <button type="submit" class="btn btn-primary w-100 icon-text">
+          <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+          Ver
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- Gráfico -->
+  <div class="col-12 col-lg-8">
+    <div class="card h-100 shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">{{ejercicioNombre}}</h2>
+        {{#if datos.length}}
+        <span class="badge bg-success">{{datos.length}} sesión(es)</span>
+        {{/if}}
+      </div>
+      <div class="card-body">
+        {{#if datos.length}}
+
+        <!-- Tabs: Peso / 1RM estimado -->
+        <ul class="nav nav-tabs mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab"
+                    data-bs-target="#tab-peso" type="button" role="tab">
+              Peso levantado
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab"
+                    data-bs-target="#tab-1rm" type="button" role="tab">
+              1RM estimado
+              <span data-bs-toggle="tooltip" title="Fórmula de Epley: peso × (1 + reps/30)">
+                <i class="bi bi-question-circle-fill text-primary small" aria-hidden="true"></i>
+              </span>
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tab-peso" role="tabpanel">
+            {{!-- A-08: canvas sin atributos accesibles en tema accesibilidad (WCAG 1.1.1) --}}
+            {{!-- R-10: línea en desktop, barras horizontal en móvil --}}
+            {{!-- R-10: gráfico oculto en móvil, visible desde sm --}}
+            <canvas id="grafico-peso" class="canvas-acc-ok d-none d-sm-block"
+                    aria-label="Evolución del peso en {{ejercicioNombre}}"
+                    aria-describedby="tabla-datos-acc" role="img" style="max-height:300px;"></canvas>
+            <canvas id="grafico-peso-error" class="canvas-acc-error d-sm-block" role="img" style="max-height:300px;"></canvas>
+          </div>
+          <div class="tab-pane fade" id="tab-1rm" role="tabpanel">
+            <canvas id="grafico-1rm" class="d-none d-sm-block"
+                    aria-label="1RM estimado en {{ejercicioNombre}}"
+                    role="img" style="max-height:300px;"></canvas>
+          </div>
+        </div>
+
+        <table class="chart-data-table" id="tabla-datos-acc" aria-label="Datos del gráfico">
+          <caption>Evolución de {{ejercicioNombre}}</caption>
+          <thead>
+            <tr><th>Fecha</th><th>Mejor peso (kg)</th><th>Reps</th><th>1RM est.</th></tr>
+          </thead>
+          <tbody>
+            {{#each datos}}
+            <tr>
+              <td>{{fecha}}</td>
+              <td>{{mejor_peso}}</td>
+              <td>{{mejores_reps}}</td>
+              <td>{{epley}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+
+        {{else}}
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-graph-up" style="font-size:3rem;" aria-hidden="true"></i>
+          <p class="mt-3">Sin datos para este ejercicio.<br>
+            <a href="/dashboard">Inicia un entrenamiento</a> para empezar.
+          </p>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel lateral -->
+  <div class="col-12 col-lg-4 d-flex flex-column gap-3">
+
+    <!-- Estadísticas -->
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+          Estadísticas
+        </h2>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Mejor peso</span>
+          <strong class="text-success">{{#if stats.mejor}}{{stats.mejor}} kg{{else}}—{{/if}}</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">1RM estimado</span>
+          <strong class="text-primary">{{#if stats.epleyMax}}{{stats.epleyMax}} kg{{else}}—{{/if}}</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Último peso</span>
+          <strong>{{#if stats.ultimo}}{{stats.ultimo}} kg{{else}}—{{/if}}</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Progreso total</span>
+          <strong class="{{#if stats.positivo}}text-success{{else}}text-muted{{/if}}">
+            {{#if stats.diferencia}}
+              {{#if stats.positivo}}+{{/if}}{{stats.diferencia}} kg
+            {{else}}—{{/if}}
+          </strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Sesiones</span>
+          <strong>{{datos.length}}</strong>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Historial compacto -->
+    {{#if datos.length}}
+    <div class="card shadow-sm flex-grow-1">
+      <div class="card-header">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-table" aria-hidden="true"></i>
+          Historial
+        </h2>
+      </div>
+      <!-- Versión accesible (base): tabindex permite scroll con teclado -->
+      <div class="scroll-acc-ok" style="max-height:280px; overflow-y:auto;" tabindex="0">
+        <table class="table table-sm table-hover mb-0" aria-label="Historial de sesiones">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th>Fecha</th>
+              <th class="text-end">Peso</th>
+              <th class="text-end">Reps</th>
+              <th class="text-end">1RM</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each datos}}
+            <tr>
+              <td class="small">{{fecha}}</td>
+              <td class="text-end small">{{#if mejor_peso}}{{mejor_peso}} kg{{else}}—{{/if}}</td>
+              <td class="text-end small">{{#if mejores_reps}}{{mejores_reps}}{{else}}—{{/if}}</td>
+              <td class="text-end small text-muted">{{#if epley}}{{epley}}{{else}}—{{/if}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      <!-- Versión sin tabindex (A-11) y sin encabezados de tabla (A-12): -->
+      <!-- solo visible en tema accesibilidad                            -->
+      <div class="scroll-acc-error" style="max-height:280px; overflow-y:auto;">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light sticky-top">
+            <tr>
+              <td>Fecha</td>
+              <td class="text-end">Peso</td>
+              <td class="text-end">Reps</td>
+              <td class="text-end">1RM</td>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each datos}}
+            <tr>
+              <td class="small">{{fecha}}</td>
+              <td class="text-end small">{{#if mejor_peso}}{{mejor_peso}} kg{{else}}—{{/if}}</td>
+              <td class="text-end small">{{#if mejores_reps}}{{mejores_reps}}{{else}}—{{/if}}</td>
+              <td class="text-end small text-muted">{{#if epley}}{{epley}}{{else}}—{{/if}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+</div>
+
+<script>
+const _datos = {{{datosJson}}};
+
+document.addEventListener('DOMContentLoaded', function () {
+  if (!_datos.length || typeof Chart === 'undefined') return;
+
+  const labels  = _datos.map(d => d.fecha);
+  const pesos   = _datos.map(d => d.mejor_peso);
+  const epley1rm = _datos.map(d => d.epley);
+
+  const baseOpts = {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: { beginAtZero: false, title: { display: true, text: 'kg' } },
+      x: { title: { display: true, text: 'Fecha' } }
+    }
+  };
+
+  const pesoData = {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Mejor peso (kg)',
+        data: pesos,
+        borderColor: '#198754',
+        backgroundColor: 'rgba(25,135,84,.12)',
+        borderWidth: 2,
+        pointRadius: 5, pointHoverRadius: 7,
+        fill: true, tension: 0.3,
+      }]
+    },
+    options: baseOpts,
+  };
+
+  // Gráfico de peso levantado — canvas accesible (base) y sin accesibilidad (tema acc)
+  new Chart(document.getElementById('grafico-peso'), pesoData);
+  new Chart(document.getElementById('grafico-peso-error'), pesoData);
+
+  // Gráfico 1RM estimado — línea (desktop)
+  new Chart(document.getElementById('grafico-1rm'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: '1RM estimado (Epley)',
+        data: epley1rm,
+        borderColor: '#0d6efd',
+        backgroundColor: 'rgba(13,110,253,.12)',
+        borderWidth: 2,
+        pointRadius: 5, pointHoverRadius: 7,
+        fill: true, tension: 0.3,
+      }]
+    },
+    options: { ...baseOpts, plugins: { ...baseOpts.plugins,
+      tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} kg (est.)` } }
+    }},
+  });
+
+  // Tooltips Bootstrap
+  document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    .forEach(el => new bootstrap.Tooltip(el));
+});
+</script>

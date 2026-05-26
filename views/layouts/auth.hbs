@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} | FitTrack</title>
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/errores.css">
+</head>
+<body class="{{currentTheme}} bg-light min-vh-100 d-flex flex-column" id="app-body">
+
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  {{!-- A-13: <header> sin <nav> — ARC detecta "No nav landmark" (WCAG 2.4.1) --}}
+  <header class="bg-white border-bottom px-3 py-2 d-flex align-items-center">
+    <a class="d-flex align-items-center gap-2 fw-bold text-primary text-decoration-none" href="/">
+      <i class="bi bi-activity" aria-hidden="true"></i>
+      FitTrack
+    </a>
+    <div class="d-flex align-items-center gap-2 ms-auto skin-selector-wrapper"
+         role="group" aria-label="Selector de tema pedagógico">
+      <label for="skin-select-auth" class="mb-0 fw-semibold text-nowrap small text-muted">
+        <i class="bi bi-palette" aria-hidden="true"></i>
+        Tema:
+      </label>
+      <select id="skin-select-auth" class="form-select form-select-sm skin-select"
+              autocomplete="off" aria-describedby="skin-help-auth">
+        <option value="theme-base">Base</option>
+        <option value="theme-usability">No usable</option>
+        <option value="theme-accessibility">No accesible</option>
+      </select>
+      <span id="skin-help-auth" class="visually-hidden">
+        Cambia entre el tema base correcto y los temas con errores pedagógicos de UI
+      </span>
+    </div>
+  </header>
+
+  <main id="main-content" class="flex-grow-1 d-flex" tabindex="-1">
+
+    {{!-- Panel izquierdo: solo visible en escritorio --}}
+    <div class="d-none d-md-flex flex-column justify-content-center align-items-center bg-primary text-white p-5 auth-panel-left">
+      <i class="bi bi-activity mb-3" style="font-size:3.5rem;" aria-hidden="true"></i>
+      <h2 class="fw-bold mb-2">FitTrack</h2>
+      <p class="text-center text-white-50 mb-4">Tu entrenamiento, organizado.</p>
+      <ul class="list-unstyled text-white-50 small">
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2" aria-hidden="true"></i>Crea planes personalizados</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2" aria-hidden="true"></i>Registra cada sesión</li>
+        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2" aria-hidden="true"></i>Sigue tu progreso</li>
+      </ul>
+    </div>
+
+    {{!-- Panel derecho: formulario --}}
+    <div class="flex-grow-1 d-flex align-items-center justify-content-center py-5 px-3">
+      <div class="w-100" style="max-width:420px;">
+        <div class="text-center mb-4 d-md-none">
+          <i class="bi bi-activity text-primary" style="font-size:2.5rem;" aria-hidden="true"></i>
+          <h1 class="h3 text-primary mt-1">FitTrack</h1>
+        </div>
+        {{{body}}}
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/skin.js"></script>
+</body>
+</html>

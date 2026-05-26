@@ -1,0 +1,72 @@
+<div class="card shadow-sm border-0">
+  <div class="card-body p-4 p-sm-5">
+
+    <div class="text-center mb-4">
+      <i class="bi bi-person-plus-fill text-success" style="font-size:2.5rem;" aria-hidden="true"></i>
+      <h1 class="h4 mt-2 mb-0">Crear Cuenta</h1>
+      <p class="text-muted small">Regístrate y empieza a entrenar</p>
+    </div>
+
+    {{#if error}}
+    <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+      <span>{{error}}</span>
+    </div>
+    {{/if}}
+
+    <form action="/registro" method="POST" novalidate>
+
+      <div class="mb-3">
+        <label for="nombre" class="form-label fw-semibold">
+          Nombre completo <span class="text-danger req-mark" aria-hidden="true">*</span>
+        </label>
+        <input type="text" class="form-control" id="nombre" name="nombre"
+               value="{{nombre}}"
+               required autocomplete="name"
+               placeholder="Tu nombre">
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label fw-semibold">
+          Email <span class="text-danger req-mark" aria-hidden="true">*</span>
+        </label>
+        <input type="email" class="form-control" id="email" name="email"
+               value="{{email}}"
+               required autocomplete="email"
+               placeholder="tu@email.com">
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label fw-semibold">
+          Contraseña <span class="text-danger req-mark" aria-hidden="true">*</span>
+        </label>
+        <input type="password" class="form-control" id="password" name="password"
+               required minlength="6" autocomplete="new-password"
+               placeholder="Mínimo 6 caracteres">
+        <div class="form-text">Al menos 6 caracteres.</div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password2" class="form-label fw-semibold">
+          Repetir contraseña <span class="text-danger req-mark" aria-hidden="true">*</span>
+        </label>
+        <input type="password" class="form-control" id="password2" name="password2"
+               required autocomplete="new-password"
+               placeholder="Repite la contraseña">
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 btn-lg icon-text">
+        <i class="bi bi-person-plus" aria-hidden="true"></i>
+        Crear cuenta
+      </button>
+    </form>
+
+    <hr class="my-4">
+
+    <p class="text-center text-muted small mb-0">
+      ¿Ya tienes cuenta?
+      <a href="/login" class="fw-semibold">Iniciar sesión</a>
+    </p>
+
+  </div>
+</div>

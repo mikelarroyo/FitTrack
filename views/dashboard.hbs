@@ -1,0 +1,294 @@
+{{!-- Identificador de página para selectores CSS :has() de theme-usability --}}
+<span class="js-page-dashboard d-none" aria-hidden="true"></span>
+
+{{#if exito}}
+<div class="alert alert-success alert-dismissible fade show icon-text mb-4" role="alert">
+  <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+  <strong>¡Entrenamiento completado!</strong> El progreso ha sido guardado.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+</div>
+{{/if}}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="mb-0 icon-text">
+    <i class="bi bi-activity" aria-hidden="true"></i>
+    Mis Planes
+  </h1>
+  <a href="/planes/nuevo" class="btn btn-primary icon-text d-none d-md-flex">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Nuevo Plan
+  </a>
+</div>
+
+{{!-- R-09: FAB solo visible en móvil (< 768px) --}}
+<a href="/planes/nuevo" class="fab d-md-none" aria-label="Nuevo Plan">
+  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+</a>
+
+{{#if hayPlanes}}
+
+{{!-- ── RUTINA ACTUAL ──────────────────────────────────────────────────────── --}}
+{{#if planActual}}
+<h2 class="h5 mb-3 icon-text text-success">
+  <i class="bi bi-star-fill" aria-hidden="true"></i>
+  Rutina actual
+</h2>
+
+<div class="card mb-5 shadow border-success border-2">
+
+  <div class="card-header d-flex justify-content-between align-items-start flex-wrap gap-2 py-3 bg-success-subtle">
+    <div>
+      <h3 class="h4 mb-1">
+        <a href="/planes/{{planActual.id}}" class="text-decoration-none text-dark">{{planActual.nombre}}</a>
+      </h3>
+      {{#if planActual.descripcion}}
+      <p class="text-muted small mb-0">{{planActual.descripcion}}</p>
+      {{/if}}
+    </div>
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+      {{#if planActual.total_sesiones}}
+      <span class="badge bg-light text-dark border">
+        <i class="bi bi-check2-circle text-success" aria-hidden="true"></i>
+        {{planActual.total_sesiones}} sesión(es)
+      </span>
+      {{/if}}
+      {{#if planActual.ultima_sesion}}
+      <span class="badge bg-light text-dark border">
+        <i class="bi bi-calendar-check" aria-hidden="true"></i>
+        Último: {{planActual.ultima_sesion}}
+      </span>
+      {{/if}}
+      <a href="/planes/{{planActual.id}}" class="btn btn-sm btn-outline-primary icon-text">
+        <i class="bi bi-eye" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Ver plan</span>
+      </a>
+      <a href="/planes/{{planActual.id}}/editar" class="btn btn-sm btn-outline-secondary icon-text">
+        <i class="bi bi-pencil" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Editar</span>
+      </a>
+    </div>
+  </div>
+
+  {{#if planActual.dias.length}}
+  <div class="card-body pt-3 pb-2">
+    <div class="row g-3 dias-scroll">
+      {{#each planActual.dias}}
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="border rounded-3 p-3 h-100 d-flex flex-column bg-white dia-card">
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="h6 mb-0 fw-bold">{{nombre}}</h4>
+            {{#if dia_semana}}
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle small">
+              {{dia_semana}}
+            </span>
+            {{/if}}
+          </div>
+
+          {{#if ejercicios.length}}
+          <ul class="list-unstyled small text-muted flex-grow-1 mb-3">
+            {{#each ejercicios}}
+            <li class="py-1 border-bottom d-flex justify-content-between">
+              <span><i class="bi bi-dot" aria-hidden="true"></i>{{nombre}}</span>
+              <span class="text-nowrap">{{series}}×{{reps}}{{#if peso_kg}} · {{peso_kg}}kg{{/if}}</span>
+            </li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <p class="text-muted fst-italic small flex-grow-1">Sin ejercicios aún.</p>
+          {{/if}}
+
+          {{#if ultima_sesion}}
+          <small class="text-muted d-block mb-2">
+            <i class="bi bi-clock-history" aria-hidden="true"></i>
+            Último: {{ultima_sesion}}
+          </small>
+          {{/if}}
+
+          <a href="/entrenar/{{id}}"
+             class="btn btn-success btn-sm w-100 icon-text fw-semibold"
+             aria-label="Iniciar entrenamiento {{nombre}}">
+            <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+            Entrenar
+          </a>
+        </div>
+      </div>
+      {{/each}}
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <a href="/planes/{{planActual.id}}/dias/nuevo"
+           class="border rounded-3 p-3 h-100 d-flex flex-column align-items-center justify-content-center text-muted text-decoration-none dia-card-add"
+           style="min-height:120px; border-style:dashed!important;"
+           aria-label="Añadir nuevo día al plan {{planActual.nombre}}">
+          <i class="bi bi-plus-circle fs-3 mb-1" aria-hidden="true"></i>
+          <span class="small">Añadir día</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div class="card-body text-muted fst-italic small">
+    Sin días de entrenamiento.
+    <a href="/planes/{{planActual.id}}/dias/nuevo">Añade el primero</a>.
+  </div>
+  {{/if}}
+
+  <div class="card-footer d-flex justify-content-between align-items-center py-2">
+    <a href="/progreso?plan={{planActual.id}}" class="btn btn-sm btn-outline-secondary icon-text">
+      <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+      <span class="d-none d-md-inline">Ver progreso</span>
+    </a>
+    <form action="/planes/{{planActual.id}}/eliminar" method="POST"
+          onsubmit="return confirm('¿Eliminar el plan «{{planActual.nombre}}» y todo su historial?')">
+      <button type="submit" class="btn btn-sm btn-outline-danger icon-text">
+        <i class="bi bi-trash" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Eliminar plan</span>
+      </button>
+    </form>
+  </div>
+
+</div>
+{{/if}}
+
+{{!-- ── OTROS PLANES ────────────────────────────────────────────────────────── --}}
+{{#if otrosPlanes.length}}
+<h2 class="h5 mb-3 icon-text text-muted">
+  <i class="bi bi-journal-bookmark" aria-hidden="true"></i>
+  {{#if planActual}}Otros planes{{else}}Mis planes{{/if}}
+</h2>
+
+{{#each otrosPlanes}}
+<div class="card mb-3 shadow-sm">
+
+  <div class="card-header d-flex justify-content-between align-items-start flex-wrap gap-2 py-3">
+    <div>
+      <h3 class="h5 mb-1">
+        <a href="/planes/{{id}}" class="text-decoration-none text-dark">{{nombre}}</a>
+      </h3>
+      {{#if descripcion}}
+      <p class="text-muted small mb-0">{{descripcion}}</p>
+      {{/if}}
+    </div>
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+      {{#if total_sesiones}}
+      <span class="badge bg-light text-dark border">
+        <i class="bi bi-check2-circle text-success" aria-hidden="true"></i>
+        {{total_sesiones}} sesión(es)
+      </span>
+      {{/if}}
+      {{#if ultima_sesion}}
+      <span class="badge bg-light text-dark border">
+        <i class="bi bi-calendar-check" aria-hidden="true"></i>
+        Último: {{ultima_sesion}}
+      </span>
+      {{/if}}
+      <form action="/planes/{{id}}/activar" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-sm btn-outline-success icon-text">
+          <i class="bi bi-star" aria-hidden="true"></i>
+          <span class="d-none d-md-inline">Marcar como actual</span>
+        </button>
+      </form>
+      <a href="/planes/{{id}}" class="btn btn-sm btn-outline-primary icon-text">
+        <i class="bi bi-eye" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Ver plan</span>
+      </a>
+      <a href="/planes/{{id}}/editar" class="btn btn-sm btn-outline-secondary icon-text">
+        <i class="bi bi-pencil" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Editar</span>
+      </a>
+    </div>
+  </div>
+
+  {{#if dias.length}}
+  <div class="card-body pt-3 pb-2">
+    <div class="row g-3 dias-scroll">
+      {{#each dias}}
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="border rounded-3 p-3 h-100 d-flex flex-column bg-white dia-card">
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="h6 mb-0 fw-bold">{{nombre}}</h4>
+            {{#if dia_semana}}
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle small">
+              {{dia_semana}}
+            </span>
+            {{/if}}
+          </div>
+
+          {{#if ejercicios.length}}
+          <ul class="list-unstyled small text-muted flex-grow-1 mb-3">
+            {{#each ejercicios}}
+            <li class="py-1 border-bottom d-flex justify-content-between">
+              <span><i class="bi bi-dot" aria-hidden="true"></i>{{nombre}}</span>
+              <span class="text-nowrap">{{series}}×{{reps}}{{#if peso_kg}} · {{peso_kg}}kg{{/if}}</span>
+            </li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <p class="text-muted fst-italic small flex-grow-1">Sin ejercicios aún.</p>
+          {{/if}}
+
+          {{#if ultima_sesion}}
+          <small class="text-muted d-block mb-2">
+            <i class="bi bi-clock-history" aria-hidden="true"></i>
+            Último: {{ultima_sesion}}
+          </small>
+          {{/if}}
+
+          <a href="/entrenar/{{id}}"
+             class="btn btn-outline-success btn-sm w-100 icon-text"
+             aria-label="Iniciar entrenamiento {{nombre}}">
+            <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+            Entrenar
+          </a>
+        </div>
+      </div>
+      {{/each}}
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <a href="/planes/{{id}}/dias/nuevo"
+           class="border rounded-3 p-3 h-100 d-flex flex-column align-items-center justify-content-center text-muted text-decoration-none dia-card-add"
+           style="min-height:120px; border-style:dashed!important;"
+           aria-label="Añadir nuevo día al plan {{nombre}}">
+          <i class="bi bi-plus-circle fs-3 mb-1" aria-hidden="true"></i>
+          <span class="small">Añadir día</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div class="card-body text-muted fst-italic small">
+    Sin días de entrenamiento.
+    <a href="/planes/{{id}}/dias/nuevo">Añade el primero</a>.
+  </div>
+  {{/if}}
+
+  <div class="card-footer d-flex justify-content-between align-items-center py-2">
+    <a href="/progreso?plan={{id}}" class="btn btn-sm btn-outline-secondary icon-text">
+      <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+      <span class="d-none d-md-inline">Ver progreso</span>
+    </a>
+    <form action="/planes/{{id}}/eliminar" method="POST"
+          onsubmit="return confirm('¿Eliminar el plan «{{nombre}}» y todo su historial?')">
+      <button type="submit" class="btn btn-sm btn-outline-danger icon-text">
+        <i class="bi bi-trash" aria-hidden="true"></i>
+        <span class="d-none d-md-inline">Eliminar plan</span>
+      </button>
+    </form>
+  </div>
+
+</div>
+{{/each}}
+{{/if}}
+
+{{else}}
+<div class="text-center py-5">
+  <i class="bi bi-journal-x text-muted" style="font-size:4rem;" aria-hidden="true"></i>
+  <h2 class="h4 mt-3">Aún no tienes planes</h2>
+  <p class="text-muted">Crea tu primer plan de entrenamiento (ej: Push Pull Legs).</p>
+  <a href="/planes/nuevo" class="btn btn-primary btn-lg">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Crear primer plan
+  </a>
+</div>
+{{/if}}

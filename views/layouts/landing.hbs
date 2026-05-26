@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FitTrack — Seguimiento de planes y progreso de entrenamiento">
+  <title>{{title}} | FitTrack</title>
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/errores.css">
+</head>
+<body class="{{currentTheme}}" id="app-body">
+
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm" aria-label="Navegación principal">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/">
+        <i class="bi bi-activity" aria-hidden="true"></i>
+        FitTrack
+      </a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navbarLanding"
+              aria-controls="navbarLanding" aria-expanded="false"
+              aria-label="Abrir navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarLanding">
+        <div class="ms-auto d-flex gap-2 flex-wrap align-items-center">
+          <div class="d-flex align-items-center gap-2 skin-selector-wrapper"
+               role="group" aria-label="Selector de tema pedagógico">
+            <label for="skin-select" class="text-white mb-0 fw-semibold text-nowrap small">
+              <i class="bi bi-palette" aria-hidden="true"></i>
+              <span class="ms-1 d-none d-sm-inline">Tema:</span>
+            </label>
+            <select id="skin-select" class="form-select form-select-sm skin-select"
+                    autocomplete="off" aria-describedby="skin-help-landing">
+              <option value="theme-base">Base</option>
+              <option value="theme-usability">No usable</option>
+              <option value="theme-accessibility">No accesible</option>
+            </select>
+            <span id="skin-help-landing" class="visually-hidden">
+              Cambia entre el tema base correcto y los temas con errores pedagógicos de UI
+            </span>
+          </div>
+          <a href="/login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
+          <a href="/registro" class="btn btn-light btn-sm fw-semibold text-primary">Registrarse gratis</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" tabindex="-1">
+    {{{body}}}
+  </main>
+
+  <footer class="py-4 bg-dark text-white-50">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <p class="mb-0 small">
+        &copy; 2026 FitTrack &mdash; Práctica Diseño de Interfaces, 2º DAW
+      </p>
+      <nav aria-label="Pie de página">
+        <ul class="nav small">
+          <li class="nav-item"><a class="nav-link text-white-50 px-2" href="/login">Iniciar sesión</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50 px-2" href="/registro">Registrarse</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/skin.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!-- PANEL DE ADMINISTRACIÓN -->
+<div class="row justify-content-center">
+  <div class="col-12 col-xl-11">
+
+    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+      <div>
+        <h1 class="mb-0 icon-text">
+          <i class="bi bi-shield-check" aria-hidden="true"></i>
+          Panel de Administración
+        </h1>
+        <p class="text-muted mb-0">Gestión de usuarios y estadísticas globales</p>
+      </div>
+    </div>
+
+    <!-- ── Estadísticas globales ───────────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-1 fw-bold text-primary">{{globalStats.usuarios}}</div>
+            <div class="text-muted small">Usuarios totales</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-1 fw-bold text-success">{{globalStats.activos}}</div>
+            <div class="text-muted small">Usuarios activos</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-1 fw-bold text-info">{{globalStats.planes}}</div>
+            <div class="text-muted small">Planes creados</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-1 fw-bold text-warning">{{globalStats.sesiones}}</div>
+            <div class="text-muted small">Sesiones registradas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Tabla de usuarios ─────────────────────────────────────────────────── -->
+    <div class="card shadow-sm">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-people" aria-hidden="true"></i>
+          Usuarios registrados
+        </h2>
+        <span class="badge bg-secondary">{{globalStats.usuarios}}</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" aria-label="Lista de usuarios">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Planes</th>
+              <th class="text-center">Sesiones</th>
+              <th>Registrado</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each usuarios}}
+            <tr class="{{#unless activo}}table-secondary{{/unless}}">
+              <td class="text-muted small">{{id}}</td>
+              <td>
+                <a href="/admin/usuarios/{{id}}" class="fw-semibold text-decoration-none">
+                  {{nombre}}
+                </a>
+              </td>
+              <td class="text-muted small">{{email}}</td>
+              <td>
+                {{#if (eq rol 'admin')}}
+                <span class="badge bg-danger icon-text">
+                  <i class="bi bi-shield-check" aria-hidden="true"></i>
+                  Admin
+                </span>
+                {{else}}
+                <span class="badge bg-secondary">Usuario</span>
+                {{/if}}
+              </td>
+              <td class="text-center">
+                {{#if activo}}
+                <span class="badge bg-success">Activo</span>
+                {{else}}
+                <span class="badge bg-warning text-dark">Inactivo</span>
+                {{/if}}
+              </td>
+              <td class="text-center">{{num_planes}}</td>
+              <td class="text-center">{{num_sesiones}}</td>
+              <td class="text-muted small">{{creado_en}}</td>
+              <td class="text-end">
+                <div class="d-flex gap-1 justify-content-end flex-wrap">
+                  <a href="/admin/usuarios/{{id}}"
+                     class="btn btn-sm btn-outline-primary"
+                     title="Ver detalle">
+                    <i class="bi bi-eye" aria-hidden="true"></i>
+                  </a>
+                  {{#unless (eq rol 'admin')}}
+                  <form action="/admin/usuarios/{{id}}/toggle-activo" method="POST" class="d-inline">
+                    <button type="submit"
+                            class="btn btn-sm {{#if activo}}btn-outline-warning{{else}}btn-outline-success{{/if}}"
+                            title="{{#if activo}}Desactivar{{else}}Activar{{/if}}">
+                      <i class="bi {{#if activo}}bi-pause-circle{{else}}bi-play-circle{{/if}}" aria-hidden="true"></i>
+                    </button>
+                  </form>
+                  <form action="/admin/usuarios/{{id}}/eliminar" method="POST" class="d-inline"
+                        onsubmit="return confirm('¿Eliminar al usuario {{nombre}}? Esta acción no se puede deshacer.')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar usuario">
+                      <i class="bi bi-trash" aria-hidden="true"></i>
+                    </button>
+                  </form>
+                  {{/unless}}
+                </div>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

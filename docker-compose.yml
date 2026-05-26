@@ -1,0 +1,24 @@
+# Credenciales de acceso (generadas automáticamente en el primer arranque)
+# ┌─────────────────────────────┬──────────────────────────┬────────────┐
+# │ Rol                         │ Email                    │ Contraseña │
+# ├─────────────────────────────┼──────────────────────────┼────────────┤
+# │ Administrador               │ admin@fittrack.com       │ admin123   │
+# │ Usuario demo                │ usuario@fittrack.com     │ user123    │
+# └─────────────────────────────┴──────────────────────────┴────────────┘
+
+services:
+  fittrack:
+    build: .
+    container_name: fittrack
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persiste la base de datos SQLite fuera del contenedor
+      - fittrack-db:/app/db
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+
+volumes:
+  fittrack-db:

@@ -1,0 +1,71 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-7">
+
+    <h1 class="mb-4 icon-text">
+      <i class="bi bi-{{#if plan}}pencil{{else}}journal-plus{{/if}}" aria-hidden="true"></i>
+      {{#if plan}}Editar Plan{{else}}Nuevo Plan de Entrenamiento{{/if}}
+    </h1>
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <form action="/planes/{{#if plan}}{{plan.id}}/editar{{else}}nuevo{{/if}}"
+              method="POST" novalidate>
+
+          <div class="mb-4">
+            <label for="nombre" class="form-label fw-semibold">
+              Nombre del plan <span class="text-danger" aria-hidden="true">*</span>
+            </label>
+            <input type="text" class="form-control form-control-lg" id="nombre" name="nombre"
+                   value="{{#if plan}}{{plan.nombre}}{{/if}}"
+                   required aria-required="true"
+                   placeholder="Ej: Push Pull Legs, Fuerza 5x5, Full Body…"
+                   aria-describedby="nombre-help">
+            <div id="nombre-help" class="form-text">
+              Ponle un nombre que identifique la estructura general del programa.
+            </div>
+            <div class="invalid-feedback">El nombre es obligatorio.</div>
+          </div>
+
+          <div class="mb-4">
+            <label for="descripcion" class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                      placeholder="Objetivos, estructura de la semana, notas generales del plan…">{{#if plan}}{{plan.descripcion}}{{/if}}</textarea>
+          </div>
+
+          <div class="d-flex gap-2 plan-form-actions">
+            <button type="submit" class="btn btn-success btn-lg icon-text">
+              <i class="bi bi-check-lg" aria-hidden="true"></i>
+              {{#if plan}}Guardar cambios{{else}}Crear Plan{{/if}}
+            </button>
+            <a href="{{#if plan}}/planes/{{plan.id}}{{else}}/dashboard{{/if}}"
+               class="btn btn-outline-secondary btn-lg icon-text">
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {{#unless plan}}
+    <div class="card mt-4 border-0 bg-light">
+      <div class="card-body">
+        <h2 class="h6 icon-text mb-2">
+          <i class="bi bi-lightbulb text-warning" aria-hidden="true"></i>
+          ¿Cómo funciona?
+        </h2>
+        <p class="small text-muted mb-1">
+          1. <strong>Crea el plan</strong> con un nombre (ej: «Push Pull Legs»).
+        </p>
+        <p class="small text-muted mb-1">
+          2. Añade los <strong>días de entrenamiento</strong> (ej: Push, Pull, Legs).
+        </p>
+        <p class="small text-muted mb-0">
+          3. En cada día, añade los <strong>ejercicios</strong> con series, reps y peso objetivo.
+        </p>
+      </div>
+    </div>
+    {{/unless}}
+
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<!-- HISTORIAL DE ENTRENAMIENTOS -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="mb-0 icon-text">
+    <i class="bi bi-clock-history" aria-hidden="true"></i>
+    Historial
+  </h1>
+  {{!-- A-17: btn-ver-ok tiene texto accesible; btn-ver-error es solo icono sin nombre (WCAG 4.1.2) --}}
+  <a href="/progreso" class="btn btn-outline-primary btn-sm icon-text btn-ver-ok">
+    <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+    Ver progreso
+  </a>
+  <a href="/progreso" class="btn btn-outline-primary btn-sm btn-ver-error" tabindex="-1">
+    <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+  </a>
+</div>
+
+<!-- Filtro por plan -->
+<div class="card mb-4">
+  <div class="card-body py-2">
+    <form method="GET" action="/historial" class="d-flex align-items-center gap-3 flex-wrap">
+      <label for="plan-filtro" class="form-label mb-0 fw-semibold">
+        <i class="bi bi-filter" aria-hidden="true"></i>
+        Plan:
+      </label>
+      <select name="plan" id="plan-filtro" class="form-select form-select-sm" style="max-width:260px;">
+        <option value="">Todos los planes</option>
+        {{#each planes}}
+        <option value="{{id}}" {{#if (eq id ../planFiltro)}}selected{{/if}}>{{nombre}}</option>
+        {{/each}}
+      </select>
+      <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>
+      {{#if planFiltro}}<a href="/historial" class="btn btn-sm btn-outline-secondary">Limpiar</a>{{/if}}
+    </form>
+  </div>
+</div>
+
+{{#if sesiones.length}}
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" aria-label="Historial de entrenamientos" style="min-width:650px;">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Plan</th>
+          <th scope="col">Día</th>
+          <th scope="col">Duración</th>
+          <th scope="col">Ejercicios</th>
+          <th scope="col">Notas</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each sesiones}}
+        <tr>
+          <td class="text-nowrap fw-semibold">{{dia}} {{mes}} {{anio}}</td>
+          <td>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+              {{plan_nombre}}
+            </span>
+          </td>
+          <td>
+            <span class="badge bg-secondary-subtle text-secondary border">
+              {{dia_nombre}}
+            </span>
+          </td>
+          <td class="text-nowrap text-muted small">
+            <i class="bi bi-stopwatch" aria-hidden="true"></i>
+            {{duracion_fmt}}
+          </td>
+          <td>
+            {{#if ejercicios.length}}
+            <div class="d-flex flex-wrap gap-1">
+              {{#each ejercicios}}
+              <span class="badge bg-light text-dark border small">
+                {{nombre}} · {{num_sets}}s
+                {{#if mejor_peso}}· {{mejor_peso}}kg{{/if}}
+              </span>
+              {{/each}}
+            </div>
+            {{/if}}
+          </td>
+          <td class="text-muted small">{{notas}}</td>
+          <td>
+            <form action="/historial/{{id}}/eliminar" method="POST"
+                  onsubmit="return confirm('¿Eliminar esta sesión del historial?')">
+              {{!-- A-16: btn-del-ok tiene aria-label; btn-del-error no tiene nombre accesible (WCAG 4.1.2) --}}
+              <button type="submit" class="btn btn-sm btn-outline-danger btn-del-ok"
+                      aria-label="Eliminar sesión del {{fecha}}">
+                <i class="bi bi-trash" aria-hidden="true"></i>
+              </button>
+              <button type="submit" class="btn btn-sm btn-outline-danger btn-del-error">
+                <i class="bi bi-trash" aria-hidden="true"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{{else}}
+<div class="text-center py-5">
+  <i class="bi bi-journal-x text-muted" style="font-size:4rem;" aria-hidden="true"></i>
+  <h2 class="h4 mt-3">Sin entrenamientos registrados</h2>
+  <p class="text-muted">Completa una sesión para que aparezca aquí.</p>
+  <a href="/dashboard" class="btn btn-success btn-lg">
+    <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+    Ir al Dashboard
+  </a>
+</div>
+{{/if}}

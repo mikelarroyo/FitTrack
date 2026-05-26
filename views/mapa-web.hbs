@@ -1,0 +1,561 @@
+<!-- MAPA WEB -->
+<h1 class="mb-2 icon-text">
+  <i class="bi bi-map" aria-hidden="true"></i>
+  Mapa Web — FitTrack
+</h1>
+<p class="text-muted mb-4">
+  Estructura completa de rutas, niveles de acceso, flujos de usuario y modelo de datos.
+</p>
+
+<!-- ── Leyenda de acceso ────────────────────────────────────────────────── -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+    <i class="bi bi-globe2" aria-hidden="true"></i> Pública — sin sesión
+  </span>
+  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+    <i class="bi bi-lock" aria-hidden="true"></i> Privada — requiere login
+  </span>
+  <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
+    <i class="bi bi-shield-lock" aria-hidden="true"></i> Admin — solo administradores
+  </span>
+</div>
+
+<!-- ── Árbol de rutas ───────────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header">
+    <h2 class="h5 mb-0 icon-text">
+      <i class="bi bi-diagram-3" aria-hidden="true"></i>
+      Árbol de rutas
+    </h2>
+  </div>
+  <div class="card-body p-0">
+    <ul class="sitemap-tree list-unstyled mb-0 p-3">
+
+      <!-- RAÍZ PÚBLICA -->
+      <li class="st-item">
+        <span class="st-label public">
+          <i class="bi bi-globe2" aria-hidden="true"></i>
+          <code>/</code>
+          <span class="st-desc">Landing — presentación de FitTrack</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label public">
+          <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+          <code>/login</code>
+          <span class="st-desc">Formulario de inicio de sesión</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label public">
+          <i class="bi bi-person-plus" aria-hidden="true"></i>
+          <code>/registro</code>
+          <span class="st-desc">Formulario de registro de cuenta</span>
+        </span>
+      </li>
+
+      <!-- ZONA PRIVADA -->
+      <li class="st-item st-group-header mt-3">
+        <span class="text-primary fw-semibold small">
+          <i class="bi bi-lock-fill" aria-hidden="true"></i> Zona privada (requiere sesión iniciada)
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-house-door" aria-hidden="true"></i>
+          <code>/dashboard</code>
+          <span class="st-desc">Vista general — todos tus planes de entrenamiento</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-journal-bookmark" aria-hidden="true"></i>
+          <code>/planes/nuevo</code>
+          <span class="st-desc">Crear un nuevo plan de entrenamiento</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-eye" aria-hidden="true"></i>
+          <code>/planes/:id</code>
+          <span class="st-desc">Detalle del plan — días, ejercicios y estadísticas</span>
+        </span>
+        <ul class="list-unstyled st-children">
+          <li class="st-item">
+            <span class="st-label private">
+              <i class="bi bi-pencil" aria-hidden="true"></i>
+              <code>/planes/:id/editar</code>
+              <span class="st-desc">Editar nombre del plan</span>
+            </span>
+          </li>
+          <li class="st-item">
+            <span class="st-label private">
+              <i class="bi bi-calendar-plus" aria-hidden="true"></i>
+              <code>/planes/:id/dias/nuevo</code>
+              <span class="st-desc">Añadir un día con ejercicios</span>
+            </span>
+          </li>
+          <li class="st-item">
+            <span class="st-label private">
+              <i class="bi bi-calendar2-check" aria-hidden="true"></i>
+              <code>/planes/:id/dias/:dia_id/editar</code>
+              <span class="st-desc">Editar día y sus ejercicios</span>
+            </span>
+          </li>
+        </ul>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+          <code>/entrenar/:dia_id</code>
+          <span class="st-desc">Sesión activa — log de series en tiempo real con cronómetro</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-trophy" aria-hidden="true"></i>
+          <code>/entrenar/resumen/:sesionId</code>
+          <span class="st-desc">Resumen de la sesión completada con valoración</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-clock-history" aria-hidden="true"></i>
+          <code>/historial</code>
+          <span class="st-desc">Todas las sesiones completadas, filtrables por plan</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+          <code>/progreso</code>
+          <span class="st-desc">Gráficos de evolución de peso y 1RM estimado por ejercicio</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-person-gear" aria-hidden="true"></i>
+          <code>/perfil</code>
+          <span class="st-desc">Editar datos personales y cambiar contraseña</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-camera-video" aria-hidden="true"></i>
+          <code>/analisis</code>
+          <span class="st-desc">30 vídeos pedagógicos — Responsive, Usabilidad, Accesibilidad</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-person-badge" aria-hidden="true"></i>
+          <code>/sobre-nosotros</code>
+          <span class="st-desc">Información del autor y del proyecto académico</span>
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label private">
+          <i class="bi bi-map" aria-hidden="true"></i>
+          <code>/mapa-web</code>
+          <span class="st-desc">Esta página — estructura completa de la aplicación</span>
+        </span>
+      </li>
+
+      <!-- ZONA ADMIN -->
+      <li class="st-item st-group-header mt-3">
+        <span class="text-danger fw-semibold small">
+          <i class="bi bi-shield-lock-fill" aria-hidden="true"></i> Zona admin (solo administradores)
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label admin">
+          <i class="bi bi-people" aria-hidden="true"></i>
+          <code>/admin</code>
+          <span class="st-desc">Panel de administración — lista de usuarios</span>
+        </span>
+        <ul class="list-unstyled st-children">
+          <li class="st-item">
+            <span class="st-label admin">
+              <i class="bi bi-person-lines-fill" aria-hidden="true"></i>
+              <code>/admin/usuarios/:id</code>
+              <span class="st-desc">Detalle de usuario — activar, cambiar rol o eliminar</span>
+            </span>
+          </li>
+        </ul>
+      </li>
+
+      <!-- API -->
+      <li class="st-item st-group-header mt-3">
+        <span class="text-secondary fw-semibold small">
+          <i class="bi bi-braces" aria-hidden="true"></i> API interna (JSON — uso interno de la app)
+        </span>
+      </li>
+
+      <li class="st-item">
+        <span class="st-label api">
+          <i class="bi bi-braces-asterisk" aria-hidden="true"></i>
+          <code>/api/planes</code>
+          <span class="st-desc">Lista de planes del usuario autenticado</span>
+        </span>
+      </li>
+      <li class="st-item">
+        <span class="st-label api">
+          <i class="bi bi-braces-asterisk" aria-hidden="true"></i>
+          <code>/api/dias/:plan_id</code>
+          <span class="st-desc">Días de un plan con sus ejercicios</span>
+        </span>
+      </li>
+      <li class="st-item">
+        <span class="st-label api">
+          <i class="bi bi-braces-asterisk" aria-hidden="true"></i>
+          <code>/api/sets/:ejercicio_id</code>
+          <span class="st-desc">Historial de sets de un ejercicio para los gráficos</span>
+        </span>
+      </li>
+
+    </ul>
+  </div>
+</div>
+
+<!-- ── Flujos principales ───────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header">
+    <h2 class="h5 mb-0 icon-text">
+      <i class="bi bi-signpost-split" aria-hidden="true"></i>
+      Flujos principales de usuario
+    </h2>
+  </div>
+  <div class="card-body">
+    <div class="row g-4">
+
+      <!-- Flujo 1: nuevo usuario -->
+      <div class="col-12 col-md-6 col-xl-3">
+        <h3 class="h6 fw-bold text-success icon-text mb-3">
+          <i class="bi bi-person-plus-fill" aria-hidden="true"></i>
+          Nuevo usuario
+        </h3>
+        <ol class="flow-list">
+          <li><a href="/">/</a> — Landing</li>
+          <li><a href="/registro">/registro</a> — Crear cuenta</li>
+          <li><a href="/login">/login</a> — Iniciar sesión</li>
+          <li><a href="/dashboard">/dashboard</a> — Ver planes</li>
+          <li><span class="text-muted">/planes/nuevo</span> — Primer plan</li>
+        </ol>
+      </div>
+
+      <!-- Flujo 2: sesión de entrenamiento -->
+      <div class="col-12 col-md-6 col-xl-3">
+        <h3 class="h6 fw-bold text-primary icon-text mb-3">
+          <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+          Sesión de entrenamiento
+        </h3>
+        <ol class="flow-list">
+          <li><a href="/dashboard">/dashboard</a> — Elegir plan</li>
+          <li><span class="text-muted">/planes/:id</span> — Ver días</li>
+          <li><span class="text-muted">/entrenar/:dia_id</span> — Registrar series</li>
+          <li><span class="text-muted">/entrenar/resumen/:id</span> — Ver resumen</li>
+          <li><a href="/progreso">/progreso</a> — Ver evolución</li>
+        </ol>
+      </div>
+
+      <!-- Flujo 3: seguimiento de progreso -->
+      <div class="col-12 col-md-6 col-xl-3">
+        <h3 class="h6 fw-bold text-warning icon-text mb-3">
+          <i class="bi bi-graph-up" aria-hidden="true"></i>
+          Seguimiento de progreso
+        </h3>
+        <ol class="flow-list">
+          <li><a href="/historial">/historial</a> — Ver sesiones</li>
+          <li><span class="text-muted">Filtrar por plan</span></li>
+          <li><a href="/progreso">/progreso</a> — Elegir ejercicio</li>
+          <li><span class="text-muted">Gráfico peso / 1RM</span></li>
+          <li><span class="text-muted">Tabla de datos detallada</span></li>
+        </ol>
+      </div>
+
+      <!-- Flujo 4: admin -->
+      <div class="col-12 col-md-6 col-xl-3">
+        <h3 class="h6 fw-bold text-danger icon-text mb-3">
+          <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+          Gestión de usuarios (admin)
+        </h3>
+        <ol class="flow-list">
+          <li><a href="/admin">/admin</a> — Panel principal</li>
+          <li><span class="text-muted">/admin/usuarios/:id</span> — Detalle</li>
+          <li><span class="text-muted">Activar / desactivar cuenta</span></li>
+          <li><span class="text-muted">Cambiar rol usuario/admin</span></li>
+          <li><span class="text-muted">Eliminar usuario</span></li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Modelo de datos ──────────────────────────────────────────────────── -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header">
+    <h2 class="h5 mb-0 icon-text">
+      <i class="bi bi-database" aria-hidden="true"></i>
+      Modelo de datos
+    </h2>
+  </div>
+  <div class="card-body">
+
+    <!-- Jerarquía visual -->
+    <div class="row g-2 align-items-center text-center mb-4">
+      <div class="col-6 col-sm-4 col-md">
+        <div class="data-node bg-primary-subtle border-primary">
+          <i class="bi bi-person-fill fs-3 text-primary d-block mb-1" aria-hidden="true"></i>
+          <strong>Usuario</strong>
+          <small class="d-block text-muted">nombre, email, rol</small>
+        </div>
+      </div>
+      <div class="col-auto d-none d-md-block text-muted fs-5">→</div>
+      <div class="col-6 col-sm-4 col-md">
+        <div class="data-node bg-success-subtle border-success">
+          <i class="bi bi-journal-bookmark fs-3 text-success d-block mb-1" aria-hidden="true"></i>
+          <strong>Plan</strong>
+          <small class="d-block text-muted">nombre, activo</small>
+        </div>
+      </div>
+      <div class="col-auto d-none d-md-block text-muted fs-5">→</div>
+      <div class="col-6 col-sm-4 col-md">
+        <div class="data-node bg-warning-subtle border-warning">
+          <i class="bi bi-calendar3 fs-3 text-warning d-block mb-1" aria-hidden="true"></i>
+          <strong>Día</strong>
+          <small class="d-block text-muted">nombre, orden</small>
+        </div>
+      </div>
+      <div class="col-auto d-none d-md-block text-muted fs-5">→</div>
+      <div class="col-6 col-sm-4 col-md">
+        <div class="data-node bg-danger-subtle border-danger">
+          <i class="bi bi-dumbbell fs-3 text-danger d-block mb-1" aria-hidden="true"></i>
+          <strong>Ejercicio</strong>
+          <small class="d-block text-muted">nombre, series, reps, peso</small>
+        </div>
+      </div>
+      <div class="col-auto d-none d-md-block text-muted fs-5">→</div>
+      <div class="col-6 col-sm-4 col-md">
+        <div class="data-node bg-info-subtle border-info">
+          <i class="bi bi-play-circle fs-3 text-info d-block mb-1" aria-hidden="true"></i>
+          <strong>Sesión</strong>
+          <small class="d-block text-muted">fecha, duración, notas, valoración</small>
+        </div>
+      </div>
+      <div class="col-auto d-none d-md-block text-muted fs-5">→</div>
+      <div class="col-6 col-sm-4 col-md">
+        <div class="data-node bg-secondary-subtle border-secondary">
+          <i class="bi bi-check2-square fs-3 text-secondary d-block mb-1" aria-hidden="true"></i>
+          <strong>Set</strong>
+          <small class="d-block text-muted">nº serie, peso, reps, completado</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cardinalidades -->
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Relación</th>
+            <th>Cardinalidad</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody class="small">
+          <tr>
+            <td><strong>Usuario</strong> → Plan</td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">1 : N</span></td>
+            <td>Un usuario puede tener múltiples planes de entrenamiento</td>
+          </tr>
+          <tr>
+            <td><strong>Plan</strong> → Día</td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">1 : N</span></td>
+            <td>Un plan tiene varios días (Push, Pull, Legs…)</td>
+          </tr>
+          <tr>
+            <td><strong>Día</strong> → Ejercicio</td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">1 : N</span></td>
+            <td>Cada día define los ejercicios a realizar con sus series y reps objetivo</td>
+          </tr>
+          <tr>
+            <td><strong>Día</strong> → Sesión</td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">1 : N</span></td>
+            <td>Un día puede tener múltiples sesiones registradas a lo largo del tiempo</td>
+          </tr>
+          <tr>
+            <td><strong>Sesión</strong> → Set</td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">1 : N</span></td>
+            <td>Cada sesión almacena todos los sets realizados con peso y reps reales</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tech stack ───────────────────────────────────────────────────────── -->
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h2 class="h5 mb-0 icon-text">
+      <i class="bi bi-stack" aria-hidden="true"></i>
+      Tecnologías utilizadas
+    </h2>
+  </div>
+  <div class="card-body">
+    <div class="row g-3">
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-server text-success" aria-hidden="true"></i>
+          <span>Node.js</span>
+          <small class="text-muted d-block">Entorno de ejecución</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-boxes text-success" aria-hidden="true"></i>
+          <span>Express 4</span>
+          <small class="text-muted d-block">Framework web</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-database text-warning" aria-hidden="true"></i>
+          <span>SQLite 3</span>
+          <small class="text-muted d-block">Base de datos</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-file-code text-primary" aria-hidden="true"></i>
+          <span>Handlebars</span>
+          <small class="text-muted d-block">Motor de plantillas</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-bootstrap text-purple" aria-hidden="true"></i>
+          <span>Bootstrap 5</span>
+          <small class="text-muted d-block">Framework CSS</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-bar-chart-line text-info" aria-hidden="true"></i>
+          <span>Chart.js</span>
+          <small class="text-muted d-block">Gráficos de progreso</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-key text-danger" aria-hidden="true"></i>
+          <span>bcrypt</span>
+          <small class="text-muted d-block">Hash de contraseñas</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-person-check text-secondary" aria-hidden="true"></i>
+          <span>express-session</span>
+          <small class="text-muted d-block">Gestión de sesiones</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-type text-dark" aria-hidden="true"></i>
+          <span>Bootstrap Icons</span>
+          <small class="text-muted d-block">Iconografía</small>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="tech-pill">
+          <i class="bi bi-brush text-success" aria-hidden="true"></i>
+          <span>CSS Custom Props</span>
+          <small class="text-muted d-block">Sistema de temas</small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── Árbol de sitemap ──────────────────────────────────────────────────── */
+.sitemap-tree { font-size: .9rem; }
+.st-item      { position: relative; padding: .3rem 0 .3rem 1.2rem; }
+.st-children  { padding-left: 1.5rem; border-left: 2px solid var(--bs-border-color); margin-left: .6rem; }
+
+.st-label {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  flex-wrap: wrap;
+}
+.st-label code { font-size: .85em; }
+.st-desc { color: var(--bs-secondary-color); font-size: .82em; }
+
+.st-label.public  i { color: var(--bs-success); }
+.st-label.private i { color: var(--bs-primary); }
+.st-label.admin   i { color: var(--bs-danger);  }
+.st-label.api     i { color: var(--bs-secondary);}
+.st-group-header    { padding-left: 0; list-style: none; }
+
+/* ── Flujos ────────────────────────────────────────────────────────────── */
+.flow-list {
+  padding-left: 1.2rem;
+  margin: 0;
+}
+.flow-list li {
+  padding: .25rem 0;
+  font-size: .88rem;
+  border-bottom: 1px dashed var(--bs-border-color);
+}
+.flow-list li:last-child { border-bottom: none; }
+
+/* ── Nodos del modelo de datos ─────────────────────────────────────────── */
+.data-node {
+  padding: .75rem .5rem;
+  border-radius: .5rem;
+  border: 1px solid;
+  font-size: .85rem;
+}
+
+/* ── Tech pills ────────────────────────────────────────────────────────── */
+.tech-pill {
+  text-align: center;
+  padding: .75rem .5rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .5rem;
+  font-size: .85rem;
+  font-weight: 600;
+  background: var(--bs-body-bg);
+  height: 100%;
+}
+.tech-pill i { font-size: 1.4rem; display: block; margin-bottom: .25rem; }
+.text-purple { color: #7952b3; }
+</style>

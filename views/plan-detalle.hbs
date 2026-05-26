@@ -1,0 +1,200 @@
+{{!-- Identificador de página para selectores CSS :has() de theme-usability --}}
+<span class="js-page-plan-detalle d-none" aria-hidden="true"></span>
+
+{{#if exito}}
+<div class="alert alert-success alert-dismissible fade show icon-text mb-4" role="alert">
+  <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+  <strong>{{exito}}</strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+</div>
+{{/if}}
+
+<!-- Cabecera del plan -->
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+  <div>
+    <h1 class="mb-1">{{plan.nombre}}</h1>
+    {{#if plan.descripcion}}
+    <p class="text-muted mb-0">{{plan.descripcion}}</p>
+    {{/if}}
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="/planes/{{plan.id}}/dias/nuevo" class="btn btn-primary icon-text">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      Añadir día
+    </a>
+    <a href="/planes/{{plan.id}}/editar" class="btn btn-outline-secondary icon-text">
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+      Editar plan
+    </a>
+  </div>
+</div>
+
+<!-- Stats rápidas -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-0 bg-primary-subtle">
+      <div class="card-body py-3">
+        <div class="fs-3 fw-bold text-primary">{{dias.length}}</div>
+        <div class="small text-muted">Días</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-0 bg-success-subtle">
+      <div class="card-body py-3">
+        <div class="fs-3 fw-bold text-success">{{stats.total_sesiones}}</div>
+        <div class="small text-muted">Sesiones</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-0 bg-info-subtle">
+      <div class="card-body py-3">
+        <div class="fs-3 fw-bold text-info">{{#if stats.ultima_fecha}}{{stats.ultima_fecha}}{{else}}—{{/if}}</div>
+        <div class="small text-muted">Último entreno</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-0 bg-warning-subtle">
+      <div class="card-body py-3">
+        <a href="/progreso?plan={{plan.id}}" class="text-decoration-none">
+          <div class="fs-3 fw-bold text-warning">
+            <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>
+          </div>
+          <div class="small text-warning fw-semibold">Ver progreso</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Días del plan -->
+{{#if dias.length}}
+<h2 class="h5 mb-3 icon-text">
+  <i class="bi bi-calendar3-week" aria-hidden="true"></i>
+  Días de entrenamiento
+</h2>
+
+<div class="dias-grid mb-5">
+  {{#each dias}}
+  <div>
+    <div class="card h-100 shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="h5 mb-0">{{nombre}}</h3>
+          {{#if dia_semana}}
+          <span class="badge bg-primary small mt-1">{{dia_semana}}</span>
+          {{/if}}
+        </div>
+        <span class="badge bg-secondary">{{num_sesiones}} sesión(es)</span>
+      </div>
+
+      <div class="card-body">
+        {{#if descripcion}}
+        <p class="text-muted small mb-3">{{descripcion}}</p>
+        {{/if}}
+
+        {{#if ejercicios.length}}
+        <ul class="list-group list-group-flush" aria-label="Ejercicios de {{nombre}}">
+          {{#each ejercicios}}
+          <li class="list-group-item px-0 py-1 d-flex justify-content-between small">
+            <span><i class="bi bi-chevron-right text-primary" aria-hidden="true"></i> {{nombre}}</span>
+            <span class="text-muted text-nowrap">
+              {{series}}×{{reps}}{{#if peso_kg}} · {{peso_kg}}kg{{/if}}
+              {{#if hasta_fallo}}<span class="badge badge-fallo ms-1">F</span>{{/if}}
+            </span>
+          </li>
+          {{/each}}
+        </ul>
+        {{else}}
+        <p class="text-muted fst-italic small">Sin ejercicios. Edita el día para añadir.</p>
+        {{/if}}
+      </div>
+
+      {{#if ultima_sesion}}
+      <div class="px-3 pb-0">
+        <small class="text-muted">
+          <i class="bi bi-clock-history" aria-hidden="true"></i>
+          Último: {{ultima_sesion}}
+        </small>
+      </div>
+      {{/if}}
+
+      <div class="card-footer d-flex flex-column gap-2">
+        <a href="/entrenar/{{id}}"
+           class="btn btn-success icon-text fw-semibold"
+           aria-label="Iniciar entrenamiento {{nombre}}">
+          <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+          Iniciar Entrenamiento
+        </a>
+        <div class="d-flex gap-2">
+          <a href="/planes/{{../plan.id}}/dias/{{id}}/editar"
+             class="btn btn-sm btn-outline-secondary flex-fill icon-text">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+            Editar día
+          </a>
+          <form action="/planes/{{../plan.id}}/dias/{{id}}/eliminar" method="POST"
+                onsubmit="return confirm('¿Eliminar el día «{{nombre}}» y sus sesiones?')"
+                class="flex-fill">
+            <button type="submit" class="btn btn-sm btn-outline-danger w-100 icon-text">
+              <i class="bi bi-trash" aria-hidden="true"></i>
+              Eliminar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+{{else}}
+<div class="text-center py-4 text-muted border rounded-3 mb-4">
+  <i class="bi bi-calendar-x fs-2 d-block mb-2" aria-hidden="true"></i>
+  Sin días de entrenamiento.
+  <a href="/planes/{{plan.id}}/dias/nuevo">Añade el primero</a>.
+</div>
+{{/if}}
+
+<!-- Historial reciente del plan -->
+{{#if ultimasSesiones.length}}
+<h2 class="h5 mb-3 icon-text">
+  <i class="bi bi-clock-history" aria-hidden="true"></i>
+  Sesiones recientes
+</h2>
+<div class="table-responsive mb-4">
+  <table class="table table-hover" aria-label="Últimas sesiones del plan" style="min-width:520px">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Fecha</th>
+        <th scope="col">Día</th>
+        <th scope="col">Duración</th>
+        <th scope="col">Notas</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each ultimasSesiones}}
+      <tr>
+        <td>{{fecha}}</td>
+        <td><span class="badge bg-primary-subtle text-primary">{{dia_nombre}}</span></td>
+        <td>{{duracion_fmt}}</td>
+        <td class="text-muted small">{{#if notas}}{{notas}}{{else}}—{{/if}}</td>
+        <td>
+          <form action="/historial/{{id}}/eliminar" method="POST"
+                onsubmit="return confirm('¿Eliminar este registro?')" style="display:inline">
+            <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Eliminar sesión">
+              <i class="bi bi-trash" aria-hidden="true"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+<a href="/historial?plan={{plan.id}}" class="btn btn-outline-secondary btn-sm">
+  Ver historial completo
+</a>
+{{/if}}

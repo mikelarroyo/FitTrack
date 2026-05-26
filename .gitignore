@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Base de datos local
+db/*.db
+db/*.db-shm
+db/*.db-wal
+
+# Logs
+*.log
+server-err.txt
+server-out.txt
+
+# Variables de entorno
+.env
+.env.*
+
+# Claude Code
+.claude/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

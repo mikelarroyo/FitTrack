@@ -1,0 +1,233 @@
+<!-- CREADOR / EDITOR DE RUTINAS -->
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+
+    <h1 class="mb-4 icon-text">
+      <i class="bi bi-{{#if rutina}}pencil{{else}}plus-circle{{/if}}" aria-hidden="true"></i>
+      {{#if rutina}}Editar Rutina{{else}}Nueva Rutina{{/if}}
+    </h1>
+
+    <!-- ── Datos de la rutina ────────────────────────────────────────── -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-info-circle" aria-hidden="true"></i>
+          Datos de la rutina
+        </h2>
+      </div>
+      <div class="card-body">
+        <form
+          action="/rutinas/{{#if rutina}}{{rutina.id}}/editar{{else}}nueva{{/if}}"
+          method="POST"
+          novalidate
+          aria-label="{{#if rutina}}Editar{{else}}Crear{{/if}} rutina">
+
+          <fieldset class="form-group-related mb-4">
+            <legend class="fw-semibold mb-3">
+              <i class="bi bi-tag" aria-hidden="true"></i>
+              Identificación
+            </legend>
+
+            <div class="mb-3">
+              <label for="nombre" class="form-label">
+                Nombre de la rutina
+                <span class="text-danger" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="nombre"
+                name="nombre"
+                value="{{#if rutina}}{{rutina.nombre}}{{/if}}"
+                required
+                aria-required="true"
+                placeholder="Ej: Empuje (Push), Piernas, Full Body…"
+                aria-describedby="nombre-help"
+              >
+              <div id="nombre-help" class="form-text">Usa nombres descriptivos del día o grupo muscular.</div>
+              <div class="invalid-feedback">El nombre es obligatorio.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="descripcion" name="descripcion" rows="2"
+                        placeholder="Grupos musculares trabajados, objetivo…">{{#if rutina}}{{rutina.descripcion}}{{/if}}</textarea>
+            </div>
+
+            <div class="mb-0">
+              <label for="dia_semana" class="form-label">
+                Día de la semana
+                <span
+                  data-bs-toggle="tooltip"
+                  title="Indica en qué día realizas esta rutina habitualmente"
+                  aria-label="Ayuda sobre el campo día de la semana"
+                >
+                  <i class="bi bi-question-circle-fill text-primary small" aria-hidden="true"></i>
+                </span>
+              </label>
+              <select class="form-select" id="dia_semana" name="dia_semana">
+                <option value="">-- Sin día fijo --</option>
+                {{#each dias}}
+                <option value="{{valor}}" {{#if seleccionado}}selected{{/if}}>{{valor}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </fieldset>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success icon-text">
+              <i class="bi bi-check-lg" aria-hidden="true"></i>
+              {{#if rutina}}Guardar cambios{{else}}Crear rutina{{/if}}
+            </button>
+            <a href="/dashboard" class="btn btn-outline-secondary icon-text">
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
+              Cancelar
+            </a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Ejercicios (solo al editar) ──────────────────────────────── -->
+    {{#if rutina}}
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0 icon-text">
+          <i class="bi bi-list-check" aria-hidden="true"></i>
+          Ejercicios
+        </h2>
+        <span class="badge bg-secondary">{{ejercicios.length}} ejercicio(s)</span>
+      </div>
+
+      {{#if ejercicios.length}}
+      <ul class="list-group list-group-flush" aria-label="Ejercicios de la rutina {{rutina.nombre}}">
+        {{#each ejercicios}}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{nombre}}</strong>
+              <br>
+              <small class="text-muted">
+                {{series}} series × {{reps}} reps
+                {{#if peso_kg}}&nbsp;·&nbsp;{{peso_kg}} kg{{/if}}
+                {{#if hasta_fallo}}
+                <span class="badge badge-fallo ms-1"
+                      data-bs-toggle="tooltip"
+                      title="Llevar la serie hasta el fallo muscular">Fallo</span>
+                {{/if}}
+              </small>
+            </div>
+            <form action="/rutinas/ejercicios/{{id}}/eliminar" method="POST"
+                  onsubmit="return confirm('¿Eliminar «{{nombre}}»?')">
+              <button type="submit" class="btn btn-sm btn-outline-danger icon-text"
+                      aria-label="Eliminar ejercicio {{nombre}}">
+                <i class="bi bi-trash" aria-hidden="true"></i>
+                Eliminar
+              </button>
+            </form>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+      {{else}}
+      <div class="card-body text-muted fst-italic small">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        Añade el primer ejercicio con el formulario de abajo.
+      </div>
+      {{/if}}
+
+      <!-- Añadir ejercicio -->
+      <div class="card-footer">
+        <h3 class="h6 mb-3 icon-text">
+          <i class="bi bi-plus-circle" aria-hidden="true"></i>
+          Añadir ejercicio
+        </h3>
+        <form action="/rutinas/{{rutina.id}}/ejercicios" method="POST" novalidate>
+
+          <div class="mb-3">
+            <label for="ej-nombre" class="form-label">
+              Nombre del ejercicio <span class="text-danger" aria-hidden="true">*</span>
+            </label>
+            <input type="text" class="form-control" id="ej-nombre" name="nombre"
+                   required aria-required="true"
+                   placeholder="Ej: Press banca, Sentadilla, Peso muerto…">
+            <div class="invalid-feedback">El nombre del ejercicio es obligatorio.</div>
+          </div>
+
+          <!-- Grupo de carga (Gestalt: Proximidad) -->
+          <fieldset class="form-group-related mb-3">
+            <legend class="small fw-semibold mb-2">
+              <i class="bi bi-speedometer2" aria-hidden="true"></i>
+              Parámetros de carga
+            </legend>
+            <div class="row g-2">
+              <div class="col-4">
+                <label for="ej-series" class="form-label">
+                  Series
+                  <span data-bs-toggle="tooltip" title="Número de series por ejercicio">
+                    <i class="bi bi-question-circle-fill text-primary small" aria-hidden="true"></i>
+                  </span>
+                </label>
+                <input type="number" class="form-control" id="ej-series" name="series"
+                       value="3" min="1" max="20" required>
+              </div>
+              <div class="col-4">
+                <label for="ej-reps" class="form-label">
+                  Reps
+                  <span data-bs-toggle="tooltip" title="Repeticiones por serie">
+                    <i class="bi bi-question-circle-fill text-primary small" aria-hidden="true"></i>
+                  </span>
+                </label>
+                <input type="number" class="form-control" id="ej-reps" name="reps"
+                       value="10" min="1" max="100" required>
+              </div>
+              <div class="col-4">
+                <label for="ej-peso" class="form-label">Peso (kg)</label>
+                <input type="number" class="form-control" id="ej-peso" name="peso_kg"
+                       step="0.5" min="0" placeholder="Opcional">
+              </div>
+            </div>
+            <div class="mt-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       id="ej-fallo" name="hasta_fallo" value="1">
+                <label class="form-check-label" for="ej-fallo">
+                  Hasta el fallo muscular
+                  <span data-bs-toggle="tooltip"
+                        title="La serie se prolonga hasta no poder hacer más repeticiones con buena técnica">
+                    <i class="bi bi-question-circle-fill text-primary small" aria-hidden="true"></i>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary icon-text">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            Añadir ejercicio
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Acciones rápidas post-edición -->
+    <div class="d-flex gap-2">
+      <a href="/entrenar/{{rutina.id}}" class="btn btn-success icon-text">
+        <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
+        Iniciar Entrenamiento
+      </a>
+      <a href="/dashboard" class="btn btn-outline-secondary icon-text">
+        <i class="bi bi-house-door" aria-hidden="true"></i>
+        Volver al Dashboard
+      </a>
+    </div>
+    {{/if}}
+
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    .forEach(el => new bootstrap.Tooltip(el));
+</script>

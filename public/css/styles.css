@@ -1,0 +1,773 @@
+/*
+ * styles.css — FitTrack v2
+ * Tema BASE: Interfaz perfecta según teoría de Gestalt, Nielsen y WCAG.
+ * Las secciones 16 y 17 contienen los overrides de tema (usabilidad/accesibilidad).
+ * Los errores estructurales HTML viven en las plantillas .hbs con condicionales.
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   0. VARIABLES DE DISEÑO
+   Las secciones 16/17 sobrescriben estas variables según el tema activo
+═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --color-primary:       #0d6efd;   /* Azul Bootstrap */
+  --color-danger:        #dc3545;   /* Rojo — eliminar */
+  --color-success:       #198754;   /* Verde — confirmar/guardar */
+  --color-warning:       #ffc107;
+  --color-text:          #212529;
+  --color-text-muted:    #6c757d;
+  --color-bg:            #f8f9fa;
+  --color-card-bg:       #ffffff;
+  --color-border:        #dee2e6;
+
+  --font-base:           1rem;
+  --font-sm:             .875rem;
+  --font-lg:             1.25rem;
+  --font-xl:             1.5rem;
+  --font-h1:             clamp(1.25rem, 2.5vw + 0.75rem, 2rem); /* R-02: tipografía fluida */
+
+  --radius-card:         .5rem;
+  --shadow-card:         0 2px 8px rgba(0,0,0,.10);
+  --shadow-card-hover:   0 4px 16px rgba(0,0,0,.16);
+
+  --transition-default:  200ms ease-in-out;
+  --focus-outline:       3px solid #ffc107;   /* Contraste AA para focus */
+  --focus-offset:        2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. RESET / BASE
+═══════════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main.container {
+  flex: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. ACCESIBILIDAD — SKIP LINK (WCAG 2.4.1)
+═══════════════════════════════════════════════════════════════════════════ */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  padding: .4rem .8rem;
+  border-radius: 0 0 .25rem .25rem;
+  font-weight: 600;
+  z-index: 9999;
+  transition: top var(--transition-default);
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. ACCESIBILIDAD — FOCUS VISIBLE (WCAG 2.4.7 / 3.3.3)
+   Outline muy visible para navegación por teclado.
+   Este es el objetivo principal del error de accesibilidad: quitarlo.
+═══════════════════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. NAVBAR
+═══════════════════════════════════════════════════════════════════════════ */
+.navbar {
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: var(--font-lg);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  transition: opacity var(--transition-default);
+  cursor: pointer;       /* Señal visual inequívoca — Nielsen: mapping */
+}
+.nav-link:hover { opacity: .8; }
+
+.skin-selector-wrapper {
+  border-left: 1px solid rgba(255,255,255,.25);
+  padding-left: 1rem;
+  margin-left: .5rem;
+}
+.skin-select {
+  min-width: 180px;
+  cursor: pointer;
+  font-size: var(--font-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. BREADCRUMBS (Nielsen: visibilidad del estado / dónde estoy)
+═══════════════════════════════════════════════════════════════════════════ */
+.breadcrumb-nav {
+  /* Fondo sutil para separar visualmente (Gestalt: Figura-Fondo) */
+  background: var(--color-card-bg);
+  padding: .5rem 1rem;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+}
+
+.breadcrumb {
+  margin-bottom: 0;
+  font-size: var(--font-sm);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  font-weight: bold;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. CARDS (Gestalt: Cerramiento / Figura-Fondo)
+   Las tarjetas agrupan contenido relacionado y lo separan del fondo.
+═══════════════════════════════════════════════════════════════════════════ */
+.card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-card-bg);
+  transition: box-shadow var(--transition-default), transform var(--transition-default);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+/* Dia-cards del dashboard: hover elevado igual que .card */
+.dia-card {
+  transition: box-shadow var(--transition-default), transform var(--transition-default);
+}
+.dia-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(13,110,253,.06);    /* Tinte primario muy suave */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. TIPOGRAFÍA — JERARQUÍA CLARA (Gestalt: Niveles de escala)
+   El foco del usuario debe ir: h1 → h2 → texto → acciones
+═══════════════════════════════════════════════════════════════════════════ */
+h1 { font-size: var(--font-h1);  font-weight: 700; }
+h2 { font-size: var(--font-xl);  font-weight: 600; }
+h3 { font-size: var(--font-lg);  font-weight: 600; }
+h4 { font-size: var(--font-base); font-weight: 600; }
+
+/* Alert de éxito: desaparece suavemente después de 4 s en el tema base */
+.alert-success {
+  animation: base-fadeout 0.6s 4s forwards;
+}
+@keyframes base-fadeout {
+  to { opacity: 0; pointer-events: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. BOTONES — SEMEJANZA (Gestalt) + PREVENCIÓN DE ERRORES (Nielsen)
+   Acción primaria: azul. Eliminar: siempre rojo. Nunca intercambiar colores.
+═══════════════════════════════════════════════════════════════════════════ */
+.btn {
+  cursor: pointer;
+  transition: opacity var(--transition-default), transform var(--transition-default);
+  font-weight: 500;
+}
+.btn:hover { opacity: .85; }
+.btn:active { transform: scale(.97); }
+
+/* Botón de eliminar siempre debe tener icono + texto (no solo color) */
+.btn-eliminar::before {
+  content: "\F5DE ";   /* bi-trash — Bootstrap Icons Unicode */
+  font-family: "bootstrap-icons";
+  margin-right: .25rem;
+}
+
+/* Tooltip de ayuda contextual (Nielsen: Reconocer antes que recordar) */
+[data-bs-toggle="tooltip"] {
+  cursor: help;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. FORMULARIOS (Gestalt: Proximidad + Nielsen: Prevención de errores)
+   Los campos relacionados van agrupados con <fieldset>/<legend>.
+   Cada <label> es visible y vinculado con for="..."
+═══════════════════════════════════════════════════════════════════════════ */
+.form-label {
+  font-weight: 500;
+  margin-bottom: .25rem;
+  display: block;        /* Asegurar que sea visible y sobre el input */
+  color: var(--color-text);
+}
+
+/* Peso de sesión anterior: aparece difuminado para indicar que es sugerencia */
+.input-peso-sugerido {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.input-peso-sugerido:focus {
+  color: var(--color-text);
+  font-style: normal;
+}
+
+.form-control, .form-select {
+  border-color: var(--color-border);
+  transition: border-color var(--transition-default), box-shadow var(--transition-default);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+}
+
+/* Error de validación — no solo rojo: icono + texto (WCAG 1.4.1) */
+.invalid-feedback {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+}
+.invalid-feedback::before {
+  content: "\F33A";   /* bi-exclamation-circle */
+  font-family: "bootstrap-icons";
+  flex-shrink: 0;
+}
+
+/* Agrupación visual de campos relacionados (Gestalt: Proximidad) */
+.form-group-related {
+  background: rgba(13,110,253,.03);
+  border: 1px solid rgba(13,110,253,.1);
+  border-radius: var(--radius-card);
+  padding: 1rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. BADGE DE ESTADO — No depender solo del color (WCAG 1.4.1)
+═══════════════════════════════════════════════════════════════════════════ */
+.badge-fallo {
+  background: var(--color-danger);
+  color: #fff;
+}
+.badge-fallo::before {
+  content: "⚡ ";
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. TABLA OCULTA ACCESIBLE (Chart.js — WCAG 1.1.1)
+   La tabla es visible para AT pero oculta visualmente.
+   En theme-accessibility se puede ocultar con override en sección 17
+═══════════════════════════════════════════════════════════════════════════ */
+.chart-data-table {
+  /* Bootstrap .visually-hidden equivalente manual para poder sabotearlo */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. MODAL DE CONFIRMACIÓN (Nielsen: Prevención de errores)
+═══════════════════════════════════════════════════════════════════════════ */
+.modal-header-danger {
+  background: var(--color-danger);
+  color: #fff;
+  border-radius: calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px) 0 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. PLACEHOLDERS DE VÍDEO (vista Análisis)
+═══════════════════════════════════════════════════════════════════════════ */
+.video-placeholder {
+  background: #1a1a2e;
+  border-radius: var(--radius-card);
+  min-height: 160px;
+  padding: 1rem .75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  color: rgba(255,255,255,.6);
+  border: 2px dashed rgba(255,255,255,.2);
+  transition: border-color var(--transition-default);
+  cursor: default;
+}
+.video-placeholder:hover {
+  border-color: var(--color-primary);
+}
+.video-placeholder .video-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. FOOTER
+═══════════════════════════════════════════════════════════════════════════ */
+.footer {
+  margin-top: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   15. UTILIDADES
+═══════════════════════════════════════════════════════════════════════════ */
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+
+/* ── Footer: fila → columna en móvil ────────────────────────────────────── */
+@media (max-width: 575px) {
+  .footer .container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+
+/* ── Floating Action Button (R-09) ──────────────────────────────────────── */
+.fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 16px rgba(13,110,253,.45);
+  text-decoration: none;
+  z-index: 1050;
+  transition: transform var(--transition-default), box-shadow var(--transition-default);
+}
+.fab:hover {
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(13,110,253,.55);
+}
+
+/* Cursor de carga mientras se espera respuesta del servidor */
+.loading {
+  cursor: wait;
+  opacity: .7;
+  pointer-events: none;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   17. RESPONSIVE — @MEDIA QUERY EXPLÍCITA (R-07)
+   Header del entrenamiento sticky solo en móvil: cuando haces scroll entre
+   ejercicios en el teléfono, el cronómetro y la barra de progreso se quedan
+   visibles arriba. En desktop no hace falta — todo cabe en pantalla.
+═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .entrenamiento-header {
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    z-index: 100;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 1rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   18. RESPONSIVE — TOUCH DEVICES (R-09)
+   En dispositivos táctiles los botones de check de series se agrandan
+   para que sean más fáciles de pulsar con el dedo mientras se entrena.
+═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   18. RESPONSIVE — AUTH SPLIT LAYOUT (R-09)
+   En escritorio la pantalla de login/registro se divide en dos mitades:
+   panel de marca a la izquierda y formulario a la derecha.
+   En móvil solo se muestra el formulario.
+═══════════════════════════════════════════════════════════════════════════ */
+.auth-panel-left {
+  width: 40%;
+  min-width: 300px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   19. RESPONSIVE — FLEX CALC (R-10)
+   Botones del resumen de sesión: en móvil ocupan exactamente la mitad
+   del ancho disponible menos el gap, quedando siempre de 2 en 2.
+   En escritorio van en fila con tamaño automático.
+═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .acciones-resumen > .btn {
+    flex: 1 1 calc(50% - 0.75rem);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .btn-check-set {
+    min-width: 52px;
+    min-height: 52px;
+    font-size: 1.25rem;
+    padding: 0.6rem 0.75rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   18. RESPONSIVE — CSS GRID AUTO-FILL (R-08)
+   Alternativa a Bootstrap grid: las tarjetas se redistribuyen solas
+   según el espacio disponible, sin breakpoints manuales.
+═══════════════════════════════════════════════════════════════════════════ */
+.dias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   19. TEMA USABILIDAD — body.theme-usability
+   10 errores quirúrgicos de Nielsen / Gestalt, solo en puntos concretos.
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* U-01 — Colores invertidos ─────────────────────────────────────────────── */
+/* "Eliminar plan" (peligroso) → verde; "Entrenar" (positivo) → rojo.       */
+/* El color deja de codificar la intención: viola semejanza Gestalt.         */
+.theme-usability .card-footer .btn-outline-danger {
+  --bs-btn-bg:                 #198754;
+  --bs-btn-color:              #fff;
+  --bs-btn-border-color:       #198754;
+  --bs-btn-hover-color:        #fff;
+  --bs-btn-hover-bg:           #157347;
+  --bs-btn-hover-border-color: #157347;
+}
+.theme-usability .dia-card .btn-success {
+  --bs-btn-bg:                  #dc3545;
+  --bs-btn-border-color:        #dc3545;
+  --bs-btn-hover-bg:            #dc3545;
+  --bs-btn-hover-border-color:  #dc3545;
+  --bs-btn-hover-color:         #fff;
+  --bs-btn-active-bg:           #dc3545;
+  --bs-btn-active-border-color: #dc3545;
+  --bs-btn-focus-shadow-rgb:    0,0,0;
+}
+
+/* U-02 — Sin cursor pointer en breadcrumb ───────────────────────────────── */
+/* Los enlaces de navegación (miga de pan) no cambian el cursor a mano:      */
+/* el usuario no sabe que son clicables. Nielsen: visibilidad del estado.    */
+.theme-usability .breadcrumb-nav a,
+.theme-usability .breadcrumb-nav a:hover {
+  cursor: default;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* U-03 — Jerarquía tipográfica plana ───────────────────────────────────── */
+/* h1 y h2 del dashboard al mismo tamaño: no hay punto de entrada visual.   */
+.theme-usability main:has(.js-page-dashboard) h1,
+.theme-usability main:has(.js-page-dashboard) h2 {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+/* U-04 — Breadcrumbs eliminados ────────────────────────────────────────── */
+/* Solo en plan-detalle: el usuario pierde su posición (Nielsen heurística 1).*/
+.theme-usability main:has(.js-page-plan-detalle) .breadcrumb-nav {
+  display: none;
+}
+
+/* U-05 — Nav sin indicador activo ──────────────────────────────────────── */
+/* El link activo se ve igual que los inactivos: no hay señal de "dónde estoy".*/
+.theme-usability .navbar .nav-link.active {
+  color: rgba(255, 255, 255, .55);
+}
+
+/* U-06 — Alerta desaparece en 1.5 s ─────────────────────────────────────── */
+/* "¡Entrenamiento completado!" se esfuma antes de que el usuario lo lea.    */
+.theme-usability .alert-success {
+  animation: u06-fadeout 0s 0.8s forwards;
+}
+@keyframes u06-fadeout {
+  to { opacity: 0; pointer-events: none; }
+}
+
+/* U-07 — Iconos intercambiados ─────────────────────────────────────────── */
+/* Historial muestra la gráfica de progreso y Progreso muestra el reloj:    */
+/* ambos son de seguimiento, pero el significado es distinto.                */
+.theme-usability .navbar .bi-clock-history::before {
+  content: "\f673";   /* bi-graph-up-arrow */
+}
+.theme-usability .navbar .bi-graph-up-arrow::before {
+  content: "\f292";   /* bi-clock-history */
+}
+
+/* U-08 — Botón cancelar oculto ─────────────────────────────────────────── */
+/* En el formulario de nuevo plan Cancelar desaparece: el usuario queda      */
+/* atrapado sin salida (Nielsen: libertad y control del usuario).             */
+.theme-usability .plan-form-actions .btn-outline-secondary {
+  display: none;
+}
+
+/* U-09 — Placeholder transparente ─────────────────────────────────────── */
+/* Los inputs de peso en Entrenar no muestran "kg": ¿en qué unidad pongo?   */
+.theme-usability .input-peso::placeholder,
+.theme-usability .input-reps::placeholder {
+  color: transparent;
+}
+.theme-usability .peso-unidad {
+  display: none;
+}
+
+/* U-12 — Mensaje de error genérico en login ────────────────────────────── */
+/* En vez de "Email o contraseña incorrectos" muestra solo "Error."         */
+.theme-usability .alert-danger span {
+  visibility: hidden;
+  position:   relative;
+}
+.theme-usability .alert-danger span::after {
+  content:    "Error.";
+  visibility: visible;
+  position:   absolute;
+  left:       0;
+}
+
+/* U-13 — Contraste bajo en texto secundario ────────────────────────────── */
+/* Lista de ejercicios y fecha "Último:" en las tarjetas del dashboard      */
+/* casi invisible sobre fondo blanco. Gestalt figura-fondo.                 */
+.theme-usability .dia-card .text-muted {
+  color: #ccc !important;
+}
+
+
+/* U-10 — Sin hover en tarjetas ─────────────────────────────────────────── */
+/* Las cards de días del dashboard no reaccionan al cursor:                   */
+/* affordance visual perdida — parecen texto, no elementos interactivos.      */
+.theme-usability .dia-card:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* U-11 — Labels a la derecha del input ─────────────────────────────────── */
+/* Las etiquetas aparecen a la derecha del campo en vez de encima:           */
+/* rompe el patrón esperado. Viola Gestalt: continuidad y mapeo natural.     */
+.theme-usability div:has(> .form-label + .form-control),
+.theme-usability div:has(> .form-label + .form-select),
+.theme-usability div:has(> .form-label + textarea) {
+  display:     flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap:         0.75rem;
+}
+.theme-usability div:has(> .form-label + .form-control) .form-label,
+.theme-usability div:has(> .form-label + .form-select) .form-label,
+.theme-usability div:has(> .form-label + textarea)      .form-label {
+  margin-bottom: 0;
+  flex-shrink:   0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   20. TEMA ACCESIBILIDAD — body.theme-accessibility
+   Errores WCAG. Se añaden progresivamente.
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* A-01 — Contraste de texto insuficiente (WCAG 1.4.3 AA) ───────────────── */
+/* Texto general en gris claro sobre fondo blanco: ratio ~2.8:1, falla 4.5:1 */
+.theme-accessibility main:has(.js-page-progreso) p,
+.theme-accessibility main:has(.js-page-progreso) li,
+.theme-accessibility main:has(.js-page-progreso) td,
+.theme-accessibility main:has(.js-page-progreso) .card-body {
+  color: #999 !important;
+}
+
+/* A-02 — Sin foco visible al navegar con Tab (WCAG 2.4.7 AA) ───────────── */
+/* Ningún elemento muestra indicador de foco: el usuario de teclado no sabe  */
+/* dónde está.                                                                */
+.theme-accessibility *:focus,
+.theme-accessibility *:focus-visible {
+  outline:    none !important;
+  box-shadow: none !important;
+}
+
+/* A-03 — Labels de formulario ocultas (WCAG 1.3.1 A / 3.3.2 A) ─────────── */
+/* Los lectores de pantalla no encuentran la etiqueta asociada al campo.      */
+.theme-accessibility .form-label {
+  display: none;
+}
+
+/* A-04 — Iconos sin contraste suficiente (WCAG 1.4.11 AA) ──────────────── */
+/* Iconos Bootstrap en gris muy claro: ratio < 3:1 requerido.                */
+.theme-accessibility .bi {
+  color: #ccc !important;
+}
+
+/* A-05 — Texto de botones sin contraste (WCAG 1.4.3 AA) ────────────────── */
+/* Color del texto del btn-success casi igual al fondo verde: ilegible.       */
+.theme-accessibility .btn-success {
+  --bs-btn-color:       #6aa578;
+  --bs-btn-hover-color: #6aa578;
+}
+.theme-accessibility .btn-primary {
+  --bs-btn-color:       #7aace8;
+  --bs-btn-hover-color: #7aace8;
+}
+
+/* A-06 — Enlaces sin decoración ni color diferente (WCAG 1.4.1 A) ──────── */
+/* Los enlaces del breadcrumb y las cards tienen el mismo aspecto que el     */
+/* texto normal: sin subrayado ni color distinto. No se identifican como     */
+/* clicables sin el ratón. Viola uso del color como único indicador.         */
+.theme-accessibility .breadcrumb-nav a,
+.theme-accessibility .card a:not(.btn) {
+  color:           inherit      !important;
+  text-decoration: none         !important;
+}
+
+/* A-07 — Imagen sin atributo alt (WCAG 1.1.1 A) ────────────────────────── */
+/* En tema base se muestra la imagen con alt; aquí se muestra la sin alt.    */
+.img-sin-alt                          { display: none; }
+.theme-accessibility .img-con-alt     { display: none !important; }
+.theme-accessibility .img-sin-alt     { display: block !important; }
+
+/* A-11 — Elemento scrollable sin foco de teclado (WCAG 2.1.1 A) ─────────── */
+/* El div scrollable no tiene tabindex: usuarios de teclado no pueden        */
+/* desplazarse por el historial de sesiones.                                 */
+.scroll-acc-error                       { display: none !important; }
+.theme-accessibility .scroll-acc-ok    { display: none !important; }
+.theme-accessibility .scroll-acc-error { display: block !important; }
+
+/* A-08 — Canvas sin descripción accesible (WCAG 1.1.1 A) ───────────────── */
+/* El canvas del gráfico pierde role e aria-label: lector de pantalla ciego. */
+.canvas-acc-error                     { display: none !important; }
+.theme-accessibility .canvas-acc-ok  { display: none !important; }
+.theme-accessibility .canvas-acc-error { display: block !important; }
+
+/* A-09 — Área de toque insuficiente en botones de sesión (WCAG 2.5.5 AA) ── */
+/* Los botones de marcar serie en entrenar.hbs son demasiado pequeños:        */
+/* menos de 44×44px recomendados. Imposible de pulsar en el gimnasio.         */
+.theme-accessibility .btn-check-set {
+  padding:    1px 4px !important;
+  font-size:  0.65rem !important;
+  min-width:  unset   !important;
+  min-height: unset   !important;
+}
+
+/* A-10 — Placeholder de inputs invisible (WCAG 1.4.3 AA) ───────────────── */
+/* El texto de ejemplo desaparece: el usuario no sabe qué formato introducir. */
+.theme-accessibility .form-control::placeholder {
+  color:   #fff;
+  opacity: 1;
+}
+
+/* A-13 — Nav landmark ausente en página de login (WCAG 2.4.1 A) ─────────── */
+/* El header de auth usa <header> en vez de <nav>: ningún tema tiene          */
+/* landmark de navegación en login/registro. ARC lo detecta en todos.        */
+
+/* A-14 — Contraste insuficiente en componentes no-texto (WCAG 1.4.11 AA) ── */
+/* Bordes de inputs y selects casi invisibles: no se distingue dónde está    */
+/* el campo. Ratio borde/fondo < 3:1 exigido por WCAG 1.4.11.               */
+.theme-accessibility .form-control,
+.theme-accessibility .form-select {
+  border-color: #e8e8e8 !important;
+  box-shadow:   none    !important;
+}
+
+/* A-15 — Campo obligatorio sin indicación visual (WCAG 3.3.2 A) ─────────── */
+/* El asterisco (*) que marca campos requeridos desaparece: el usuario no     */
+/* sabe qué campos son obligatorios antes de enviar el formulario.            */
+.theme-accessibility .req-mark { display: none !important; }
+
+/* A-16 — Botón icono sin nombre accesible en historial (WCAG 4.1.2 A) ───── */
+/* El botón de eliminar sesión solo muestra un icono: sin aria-label ni       */
+/* texto visible, lectores de pantalla no pueden anunciarlo.                  */
+.btn-del-error                      { display: none !important; }
+.theme-accessibility .btn-del-ok   { display: none !important; }
+.theme-accessibility .btn-del-error { display: inline-flex !important; }
+
+/* A-18 — Vídeo sin pista de subtítulos (WCAG 1.2.2 AA) ─────────────────── */
+/* El vídeo explicativo pierde el <track kind="captions">: usuarios sordos    */
+/* o en entornos sin audio no pueden seguir el contenido.                     */
+.video-cc-error                      { display: none !important; }
+.theme-accessibility .video-cc-ok   { display: none !important; }
+.theme-accessibility .video-cc-error { display: block !important; }
+
+/* A-17 — Enlace icono sin texto accesible (WCAG 4.1.2 A) ───────────────── */
+/* El enlace "Ver progreso" pierde el texto: solo queda el icono con          */
+/* aria-hidden, por lo que no tiene nombre accesible para lectores.           */
+.btn-ver-error                      { display: none !important; }
+.theme-accessibility .btn-ver-ok   { display: none !important; }
+.theme-accessibility .btn-ver-error { display: inline-flex !important; }
+
+/* ── Star rating component ──────────────────────────────────────────────── */
+.star-rating {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: .25rem;
+}
+.star-rating label {
+  font-size: 2.5rem;
+  color: #dee2e6;
+  cursor: pointer;
+  line-height: 1;
+  transition: color .1s;
+}
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label { color: #ffc107; }
+
+/* A-19 — Etiquetas duplicadas en valoración por estrellas (WCAG 2.4.6 AA) ─ */
+/* Los 5 radios tienen el mismo label "★": un lector de pantalla no puede    */
+/* distinguir entre las opciones. También falta fieldset (WCAG 1.3.1).       */
+.rating-error                      { display: none !important; }
+.theme-accessibility .rating-ok   { display: none !important; }
+.theme-accessibility .rating-error { display: block !important; }
+
+/* A-20 — Iframe de Spotify sin nombre accesible (WCAG 4.1.2 A) ──────────── */
+/* El embed de música pierde el title: lectores de pantalla no saben          */
+/* qué contiene el marco incrustado.                                          */
+.spotify-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  background: #121212;
+  padding: .5rem 1rem .5rem;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.35);
+}
+main:has(.spotify-bar) { padding-bottom: 130px; }
+
+.spotify-error                      { display: none !important; }
+.theme-accessibility .spotify-ok   { display: none !important; }
+.theme-accessibility .spotify-error { display: block !important; }

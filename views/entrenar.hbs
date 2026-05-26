@@ -1,0 +1,360 @@
+<!-- SESIÓN ACTIVA DE ENTRENAMIENTO -->
+<div class="entrenamiento-header">
+<div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+  <div>
+    <p class="text-muted small mb-0">
+      <i class="bi bi-journal-bookmark" aria-hidden="true"></i>
+      {{dia.plan_nombre}}
+    </p>
+    <h1 class="mb-0 icon-text">
+      <i class="bi bi-play-circle-fill text-success" aria-hidden="true"></i>
+      {{dia.nombre}}
+    </h1>
+    <small class="text-muted">
+      {{#if dia.dia_semana}}{{dia.dia_semana}} · {{/if}}
+      <span id="fecha-hoy"></span>
+      &nbsp;|&nbsp;
+      <i class="bi bi-stopwatch" aria-hidden="true"></i>
+      <span id="cronometro" aria-live="polite">00:00</span>
+    </small>
+  </div>
+  <a href="/planes/{{dia.plan_id}}" class="btn btn-outline-secondary btn-sm icon-text">
+    <i class="bi bi-x-lg" aria-hidden="true"></i>
+    Cancelar
+  </a>
+</div>
+
+<!-- Barra de progreso global -->
+<div class="mb-4">
+  <div class="d-flex justify-content-between small text-muted mb-1">
+    <span>Series completadas</span>
+    <span><span id="series-hechas">0</span> / {{totalSeries}}</span>
+  </div>
+  <div class="progress" style="height:10px;"
+       role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="{{totalSeries}}">
+    <div class="progress-bar bg-success transition-width" id="barra-progreso" style="width:0%"></div>
+  </div>
+</div>
+</div><!-- /.entrenamiento-header -->
+
+
+<form id="form-entrenamiento" action="/entrenar/{{dia.id}}/finalizar" method="POST">
+  <input type="hidden" name="datos_json"   id="datos-json">
+  <input type="hidden" name="duracion_seg" id="duracion-seg" value="0">
+
+  {{#each ejercicios}}
+  <div class="card mb-4 ejercicio-card"
+       data-ej-id="{{id}}"
+       data-series="{{series}}"
+       data-mejor-peso="{{mejor_peso_historico}}">
+
+    <div class="card-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h2 class="h5 mb-0">{{nombre}}</h2>
+        <small class="text-muted">
+          Objetivo: {{series}} × {{reps}} reps
+          {{#if peso_kg}}· {{peso_kg}} kg{{/if}}
+          {{#if hasta_fallo}}<span class="badge badge-fallo ms-1">Hasta el fallo</span>{{/if}}
+        </small>
+      </div>
+      <div class="text-end">
+        <span class="badge bg-secondary" id="badge-{{id}}">0/{{series}}</span>
+        <span class="badge bg-warning text-dark ms-1 d-none" id="pr-badge-{{id}}">
+          ⭐ ¡Nuevo récord!
+        </span>
+        {{#if ultimo_peso}}
+        <br>
+        <small class="text-muted">Último: {{ultimo_peso}} kg × {{ultimas_reps}} reps</small>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0 align-middle" aria-label="Series de {{nombre}}">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" class="ps-3" style="width:50px">Serie</th>
+              <th scope="col" style="width:90px">Reps</th>
+              <th scope="col" style="width:110px">
+                <abbr title="Peso en kilogramos">Peso <span class="peso-unidad">(kg)</span></abbr>
+              </th>
+              <th scope="col" class="text-center" style="width:70px">Hecha</th>
+            </tr>
+          </thead>
+          <tbody id="sets-{{id}}">
+            {{#eachN series}}
+            <tr class="set-row" data-set-num="{{num}}">
+              <td class="ps-3 fw-semibold text-muted">{{num}}</td>
+              <td>
+                <label for="reps-{{../id}}-{{num}}" class="visually-hidden">Reps serie {{num}}</label>
+                <input type="number"
+                       class="form-control form-control-sm input-reps"
+                       id="reps-{{../id}}-{{num}}"
+                       value="{{../reps}}"
+                       min="1" max="999" placeholder="reps">
+              </td>
+              <td>
+                <label for="peso-{{../id}}-{{num}}" class="visually-hidden">Peso serie {{num}}</label>
+                <input type="number"
+                       class="form-control form-control-sm input-peso"
+                       id="peso-{{../id}}-{{num}}"
+                       min="0" step="0.5" placeholder="kg">
+              </td>
+              <td class="text-center">
+                <button type="button"
+                        class="btn btn-sm btn-outline-success btn-check-set"
+                        aria-label="Marcar serie {{num}} de {{../nombre}}"
+                        aria-pressed="false"
+                        data-ej-id="{{../id}}"
+                        data-set-num="{{num}}">
+                  <i class="bi bi-check-lg" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+            {{/eachN}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Esfuerzo percibido (RPE) -->
+    <div class="px-3 py-2 border-top d-flex align-items-center gap-3 bg-light">
+      <label for="rpe-{{id}}" class="form-label mb-0 small fw-semibold text-nowrap">
+        <i class="bi bi-speedometer2" aria-hidden="true"></i>
+        Esfuerzo
+      </label>
+      <input type="range" class="form-range input-rpe"
+             id="rpe-{{id}}" data-ej-id="{{id}}"
+             min="1" max="10" step="1" value="5"
+             aria-label="Esfuerzo percibido de {{nombre}}, 1 a 10">
+      <span class="badge bg-primary" id="rpe-val-{{id}}" style="min-width:2rem;font-size:.85rem">5</span>
+      <span class="text-muted small">/10</span>
+    </div>
+
+    {{#if historial.length}}
+    <div class="border-top">
+      <button class="btn btn-link btn-sm text-muted w-100 text-start px-3 py-2"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#hist-{{id}}"
+              aria-expanded="false"
+              aria-controls="hist-{{id}}">
+        <i class="bi bi-clock-history" aria-hidden="true"></i>
+        Últimas sesiones ({{historial.length}})
+      </button>
+      <div class="collapse" id="hist-{{id}}">
+        <div class="table-responsive border-top bg-light">
+          <table class="table table-sm mb-0 align-middle" aria-label="Historial de {{nombre}}">
+            <thead>
+              <tr class="text-muted small">
+                <th scope="col" class="ps-3 fw-normal">Fecha</th>
+                <th scope="col" class="text-center fw-normal">Mejor peso</th>
+                <th scope="col" class="text-center fw-normal">Reps totales</th>
+                <th scope="col" class="text-center fw-normal">Series</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each historial}}
+              <tr class="small">
+                <td class="ps-3 text-muted">{{fecha}}</td>
+                <td class="text-center fw-semibold">{{#if mejor_peso}}{{mejor_peso}} kg{{else}}—{{/if}}</td>
+                <td class="text-center text-muted">{{#if total_reps}}{{total_reps}}{{else}}—{{/if}}</td>
+                <td class="text-center text-muted">{{num_sets}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+  {{/each}}
+
+  <!-- Notas -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <label for="notas-sesion" class="form-label fw-semibold">
+        <i class="bi bi-journal-text" aria-hidden="true"></i>
+        Notas (opcional)
+      </label>
+      <textarea class="form-control" id="notas-sesion" name="notas" rows="2"
+                placeholder="Cómo te has sentido, ajustes, próximos objetivos…"></textarea>
+    </div>
+  </div>
+
+  <!-- Botón finalizar -->
+  <div class="d-grid d-sm-flex justify-content-sm-end gap-2 mb-5">
+    <a href="/planes/{{dia.plan_id}}" class="btn btn-outline-secondary btn-lg">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+      Cancelar
+    </a>
+    <button type="submit" id="btn-finalizar"
+            class="btn btn-success btn-lg fw-bold icon-text">
+      <i class="bi bi-flag-fill" aria-hidden="true"></i>
+      Finalizar Entrenamiento
+    </button>
+  </div>
+
+</form>
+
+<script>
+(function () {
+  'use strict';
+
+  // Fecha de hoy
+  document.getElementById('fecha-hoy').textContent =
+    new Date().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+
+  // ── Estado por ejercicio: { ejId: [{ num, peso, reps, done }] }
+  const estado = {};
+  const estadoRpe = {};
+  document.querySelectorAll('.ejercicio-card').forEach(card => {
+    const ejId = card.dataset.ejId;
+    const n    = parseInt(card.dataset.series, 10);
+    estado[ejId]    = Array.from({ length: n }, (_, i) => ({ num: i+1, peso: null, reps: null, done: false }));
+    estadoRpe[ejId] = 5;
+  });
+
+  // ── Sliders de RPE
+  document.querySelectorAll('.input-rpe').forEach(input => {
+    input.addEventListener('input', function () {
+      estadoRpe[this.dataset.ejId] = parseInt(this.value, 10);
+      document.getElementById('rpe-val-' + this.dataset.ejId).textContent = this.value;
+    });
+  });
+
+  const totalSeries = {{totalSeries}};
+
+  function seriesHechas() {
+    return Object.values(estado).reduce((acc, arr) => acc + arr.filter(s => s.done).length, 0);
+  }
+
+  function actualizarBarra() {
+    const n = seriesHechas();
+    const pct = totalSeries ? Math.round(n / totalSeries * 100) : 0;
+    document.getElementById('series-hechas').textContent = n;
+    const b = document.getElementById('barra-progreso');
+    b.style.width = pct + '%';
+    b.closest('[role="progressbar"]').setAttribute('aria-valuenow', n);
+  }
+
+  // ── Botones de check por serie
+  document.querySelectorAll('.btn-check-set').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const ejId  = this.dataset.ejId;
+      const setN  = parseInt(this.dataset.setNum, 10);
+      const row   = this.closest('tr');
+      const peso  = parseFloat(row.querySelector('.input-peso').value) || null;
+      const reps  = parseInt(row.querySelector('.input-reps').value, 10) || null;
+
+      const serie = estado[ejId][setN - 1];
+      serie.done  = !serie.done;
+      serie.peso  = peso;
+      serie.reps  = reps;
+
+      this.classList.toggle('btn-success', serie.done);
+      this.classList.toggle('btn-outline-success', !serie.done);
+      this.setAttribute('aria-pressed', serie.done ? 'true' : 'false');
+      row.classList.toggle('table-success', serie.done);
+
+      // Badge del ejercicio
+      const card = this.closest('.ejercicio-card');
+      const hechasEj = estado[ejId].filter(s => s.done).length;
+      document.getElementById('badge-' + ejId).textContent =
+        hechasEj + '/' + card.dataset.series;
+
+      // Detección de PR
+      const mejorPeso = parseFloat(card.dataset.mejorPeso) || 0;
+      const mejorActual = Math.max(...estado[ejId].filter(s => s.done && s.peso).map(s => s.peso), 0);
+      const prBadge = document.getElementById('pr-badge-' + ejId);
+      if (prBadge) {
+        const esPR = mejorActual > 0 && mejorActual > mejorPeso;
+        prBadge.classList.toggle('d-none', !esPR);
+        card.classList.toggle('border-warning', esPR);
+      }
+
+      actualizarBarra();
+    });
+  });
+
+  // Sync peso/reps si ya está marcada
+  document.querySelectorAll('.input-peso, .input-reps').forEach(inp => {
+    inp.addEventListener('change', function () {
+      const btn  = this.closest('tr').querySelector('.btn-check-set');
+      if (!btn) return;
+      const ejId = btn.dataset.ejId;
+      const setN = parseInt(btn.dataset.setNum, 10);
+      const s    = estado[ejId][setN - 1];
+      if (!s.done) return;
+      const row  = this.closest('tr');
+      s.peso = parseFloat(row.querySelector('.input-peso').value) || null;
+      s.reps = parseInt(row.querySelector('.input-reps').value, 10) || null;
+    });
+  });
+
+  // ── Cronómetro
+  let seg = 0;
+  const cronEl = document.getElementById('cronometro');
+  const durEl  = document.getElementById('duracion-seg');
+  setInterval(() => {
+    seg++;
+    durEl.value = seg;
+    const m = String(Math.floor(seg / 60)).padStart(2, '0');
+    const s = String(seg % 60).padStart(2, '0');
+    cronEl.textContent = m + ':' + s;
+  }, 1000);
+
+  // ── Submit: construir payload JSON
+  document.getElementById('form-entrenamiento').addEventListener('submit', function (e) {
+    if (seriesHechas() === 0) {
+      e.preventDefault();
+      alert('Completa al menos una serie antes de finalizar.');
+      return;
+    }
+
+    // Re-leer los inputs del DOM en el momento del submit para no perder
+    // cambios de peso/reps hechos después de marcar la serie
+    document.querySelectorAll('.set-row').forEach(row => {
+      const btn = row.querySelector('.btn-check-set');
+      if (!btn) return;
+      const ejId = btn.dataset.ejId;
+      const setN = parseInt(btn.dataset.setNum, 10);
+      const s = estado[ejId]?.[setN - 1];
+      if (!s?.done) return;
+      s.peso = parseFloat(row.querySelector('.input-peso').value) || null;
+      s.reps = parseInt(row.querySelector('.input-reps').value, 10) || null;
+    });
+
+    const payload = Object.entries(estado).map(([ejId, sets]) => ({
+      ejercicio_id: parseInt(ejId, 10),
+      rpe: estadoRpe[ejId] ?? null,
+      sets: sets.filter(s => s.done).map(s => ({ num: s.num, peso: s.peso, reps: s.reps }))
+    })).filter(ej => ej.sets.length);
+
+    document.getElementById('datos-json').value = JSON.stringify(payload);
+  });
+
+})();
+</script>
+
+{{!-- A-20: barra fija de Spotify — spotify-ok tiene title; spotify-error no (WCAG 4.1.2) --}}
+<div class="spotify-bar">
+  <div class="d-flex align-items-center gap-2 mb-1">
+    <i class="bi bi-music-note-beamed text-white-50 small" aria-hidden="true"></i>
+    <span class="text-white-50 small">Música para entrenar</span>
+  </div>
+  <iframe class="spotify-ok"
+          title="Playlist de entrenamiento en Spotify"
+          src="https://open.spotify.com/embed/playlist/37i9dQZF1DX76Wlfdnj7AP?utm_source=generator&theme=0"
+          width="100%" height="80" frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"></iframe>
+  <iframe class="spotify-error"
+          src="https://open.spotify.com/embed/playlist/37i9dQZF1DX76Wlfdnj7AP?utm_source=generator&theme=0"
+          width="100%" height="80" frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"></iframe>
+</div>

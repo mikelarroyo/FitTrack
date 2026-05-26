@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="Avatar de usuario">
+  <title>Avatar de usuario</title>
+  <circle cx="70" cy="70" r="70" fill="#e9ecef"/>
+  <circle cx="70" cy="52" r="26" fill="#adb5bd"/>
+  <ellipse cx="70" cy="115" rx="42" ry="30" fill="#adb5bd"/>
+</svg>
