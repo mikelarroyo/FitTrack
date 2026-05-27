@@ -182,9 +182,9 @@ function _seed() {
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dPush},'${fecha}',2700)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${pushEjIds[0]},${s},${pesos[0]},${s<=3?8:7},0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${pushEjIds[1]},${s},${pesos[1]},10,0)`);
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${pushEjIds[2]},${s},${pesos[2]},10,0)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${pushEjIds[0]},${s},${pesos[0]},${s<=3?8:7},0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${pushEjIds[1]},${s},${pesos[1]},10,0,null)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${pushEjIds[2]},${s},${pesos[2]},10,0,null)`);
   });
 
   [['2026-04-10',[97.5,77.5,140]],['2026-04-17',[100,80,150]],['2026-04-24',[100,80,150]],
@@ -192,9 +192,9 @@ function _seed() {
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dLegs},'${fecha}',3000)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${legsEjIds[0]},${s},${pesos[0]},8,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${legsEjIds[1]},${s},${pesos[1]},10,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${legsEjIds[2]},${s},${pesos[2]},15,0)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${legsEjIds[0]},${s},${pesos[0]},8,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${legsEjIds[1]},${s},${pesos[1]},10,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${legsEjIds[2]},${s},${pesos[2]},15,0,null)`);
   });
 
   // ── Plan 3: Torso / Pierna (Upper/Lower) ────────────────────────────────────
@@ -235,41 +235,38 @@ function _seed() {
   const piernaAEjs = _db.exec(`SELECT id FROM ejercicios WHERE dia_id=${dPiernaA} ORDER BY orden`)[0].values.map(r=>r[0]);
   const torsoBEjs  = _db.exec(`SELECT id FROM ejercicios WHERE dia_id=${dTorsoB}  ORDER BY orden`)[0].values.map(r=>r[0]);
 
-  // Torso A: press banca progresa 77.5→82.5, remo 67.5→72.5, press militar 47.5→52.5
   [['2026-04-07',[77.5,67.5,47.5]],['2026-04-14',[80,70,50]],['2026-04-21',[80,70,50]],
    ['2026-04-28',[82.5,72.5,52.5]],['2026-05-05',[82.5,72.5,52.5]]
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dTorsoA},'${fecha}',3300)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[0]},${s},${pesos[0]},5,0)`);
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[1]},${s},${pesos[1]},5,0)`);
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[2]},${s},${pesos[2]},6,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[4]},${s},30,10,0)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[0]},${s},${pesos[0]},5,0,null)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[1]},${s},${pesos[1]},5,0,null)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[2]},${s},${pesos[2]},6,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoAEjs[4]},${s},30,10,0,null)`);
   });
 
-  // Pierna A: sentadilla 95→102.5, peso muerto 115→122.5
   [['2026-04-08',[95,115,155,40]],['2026-04-15',[97.5,117.5,157.5,42.5]],
    ['2026-04-22',[100,120,160,42.5]],['2026-04-29',[100,120,160,42.5]],
    ['2026-05-06',[102.5,122.5,162.5,42.5]]
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dPiernaA},'${fecha}',3600)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[0]},${s},${pesos[0]},5,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[1]},${s},${pesos[1]},5,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[2]},${s},${pesos[2]},10,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[3]},${s},${pesos[3]},10,0)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[0]},${s},${pesos[0]},5,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[1]},${s},${pesos[1]},5,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[2]},${s},${pesos[2]},10,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${piernaAEjs[3]},${s},${pesos[3]},10,0,null)`);
   });
 
-  // Torso B: press inclinado 26→30, jalón 60→65
   [['2026-04-10',[26,60]],['2026-04-17',[27.5,62.5]],['2026-04-24',[27.5,62.5]],
    ['2026-05-01',[30,65]],['2026-05-08',[30,65]]
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dTorsoB},'${fecha}',3000)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[0]},${s},${pesos[0]},10,0)`);
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[1]},${s},${pesos[1]},10,0)`);
-    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[2]},${s},10,15,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[4]},${s},27.5,15,0)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[0]},${s},${pesos[0]},10,0,null)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[1]},${s},${pesos[1]},10,0,null)`);
+    for (let s=1;s<=4;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[2]},${s},10,15,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${torsoBEjs[4]},${s},27.5,15,0,null)`);
   });
 
   // ── Plan 4: Full Body 3 días ─────────────────────────────────────────────────
@@ -306,10 +303,10 @@ function _seed() {
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dFbA},'${fecha}',2400)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[0]},${s},${pesos[0]},8,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[1]},${s},${pesos[1]},8,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[2]},${s},${pesos[2]},8,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[4]},${s},22.5,12,0)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[0]},${s},${pesos[0]},8,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[1]},${s},${pesos[1]},8,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[2]},${s},${pesos[2]},8,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbAEjs[4]},${s},22.5,12,0,null)`);
   });
 
   [['2026-04-08',[97.5,52.5,52.5]],['2026-04-15',[100,55,55]],['2026-04-22',[100,55,55]],
@@ -317,10 +314,10 @@ function _seed() {
   ].forEach(([fecha,pesos]) => {
     _db.run(`INSERT INTO sesiones (dia_id,fecha,duracion_seg) VALUES (${dFbB},'${fecha}',2400)`);
     const sid = _db.exec('SELECT last_insert_rowid()')[0].values[0][0];
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[0]},${s},${pesos[0]},5,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[1]},${s},${pesos[1]},10,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[2]},${s},${pesos[2]},10,0)`);
-    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[4]},${s},22.5,12,0)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[0]},${s},${pesos[0]},5,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[1]},${s},${pesos[1]},10,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[2]},${s},${pesos[2]},10,0,null)`);
+    for (let s=1;s<=3;s++) _db.run(`INSERT INTO sets_log VALUES (null,${sid},${fbBEjs[4]},${s},22.5,12,0,null)`);
   });
 }
 
